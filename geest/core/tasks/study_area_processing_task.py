@@ -1565,8 +1565,6 @@ class StudyAreaProcessingTask(QgsTask):
         now = datetime.datetime.now()  # Get current datetime
         now_str = now.strftime("%Y-%m-%d %H:%M:%S")  # Format the datetime object
 
-        self.set_status_tracking_table_value(normalized_name, "timestamp_start", now_str)
-
         #  Check we have a single part geom
         geom_type = ogr.GT_Flatten(geom.GetGeometryType())
         if geom_type != ogr.wkbPolygon:
@@ -1622,8 +1620,9 @@ class StudyAreaProcessingTask(QgsTask):
         # Save the bounding box for this geometry (only for areas with data)
         self.save_bbox_polygon("study_area_bboxes", aligned_bbox, normalized_name)
 
-        # Add a row to the tracking table
+        # Add a row to the tracking table and record timestamp_start
         self.add_row_to_status_tracking_table(normalized_name)
+        self.set_status_tracking_table_value(normalized_name, "timestamp_start", now_str)
 
         # Save the geometry (in the target CRS) to "study_area_polygons"
         self.save_geometry_to_geopackage("study_area_polygons", geom, normalized_name, intersects_ghsl)
