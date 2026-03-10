@@ -2517,6 +2517,16 @@ class StudyAreaProcessingTask(QgsTask):
 
         log_message(f"Tagging grid cells by population for {normalized_name}...")
 
+        # CRITICAL: Flush all pending writes before accessing the grid
+        # This prevents "database is locked" or corruption from concurrent access
+        # when the UnifiedWriterThread still holds a write connection.
+        if self.write_queue:
+            log_message(f"Flushing write queue before population tagging for {normalized_name}")
+            self.write_queue.put(self._writer_flush_token)
+            self.write_queue.join()
+            log_message("Write queue flushed successfully")
+
+        self.gpkg_lock.lock()
         ds = None
         try:
             ds = ogr.Open(self.gpkg_path, 1)  # Open for update
@@ -2587,6 +2597,8 @@ class StudyAreaProcessingTask(QgsTask):
             )
             if ds:
                 ds = None
+        finally:
+            self.gpkg_lock.unlock()
 
     ##########################################################################
     # Create Clip Polygon
