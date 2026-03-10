@@ -36,6 +36,7 @@ from geest.core.algorithms import (
     geometry_to_memory_layer,
     subset_vector_layer,
 )
+from geest.core.cleanup import clean_intermediate_files
 from geest.core.constants import GDAL_OUTPUT_DATA_TYPE
 from geest.utilities import log_layer_count, log_message, resources_path
 
@@ -865,38 +866,13 @@ class WorkflowBase(QObject):
         role = self.item.role
         source_qml = resources_path("resources", "qml", f"{role}.qml")
         vrt_filepath = combine_rasters_to_vrt(rasters, self.target_crs, vrt_filepath, source_qml)
-        # if debug mode is off, remove all files except the VRT and the rasters it refers to
+        # If developer mode is off, clean up intermediate files to reclaim disk space.
+        # Keeps only essential outputs: .vrt, .qml, .tif, and error.txt.
+        # See https://github.com/worldbank/GEEST/issues/55
         if not int(setting(key="developer_mode", default=0)):
-            log_message("Debug mode is off. Removing all files except the VRT and the rasters it refers to.")
-            # Compile a list of all of the files in the workflow directory - recursively
-
-            all_files = os.listdir(self.workflow_directory)
-            # Remove all files except the VRT, qml and the rasters it refers to
-            # loop through all files in the workflow directory
-            for file in all_files:
-                file_path = os.path.join(self.workflow_directory, file)
-                if (
-                    not file.endswith(".vrt")  # noqa W503
-                    and not file.endswith(".qml")  # noqa W503
-                    and not file.endswith(".tif")  # noqa W503
-                    and not file.endswith("error.txt")  # noqa W503
-                ):
-                    log_message(f"Removing {file_path}")
-                    try:
-                        os.remove(file_path)
-                    except Exception as e:
-                        log_message(
-                            f"Failed to remove {file_path}: {e}",
-                            tag="Geest",
-                            level=Qgis.Warning,
-                        )
-                        log_message(
-                            traceback.format_exc(),
-                            tag="Geest",
-                            level=Qgis.Warning,
-                        )
-                        continue
+            log_message("Developer mode is off. Cleaning up intermediate files.")
+            clean_intermediate_files(self.workflow_directory)
         else:
-            log_message("Debug mode is on. Keeping all files in the workflow directory.")
+            log_message("Developer mode is on. Keeping all intermediate files.")
 
         return vrt_filepath
