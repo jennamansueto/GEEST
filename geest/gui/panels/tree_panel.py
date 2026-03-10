@@ -824,6 +824,26 @@ class TreePanel(QWidget):
             menu.addAction(clear_item_action)
             menu.addAction(clear_results_action)
             menu.addAction(run_item_action)
+
+            # Add WEE aggregation-specific actions to prevent unnecessary reprocessing
+            # See: https://github.com/worldbank/GEEST/issues/41
+            run_aggregation_only_action = QAction("Run Aggregation Only", self)
+            run_aggregation_only_action.setToolTip(
+                "Re-run only the dimension and analysis aggregation steps "
+                "without reprocessing individual indicators or factors."
+            )
+            run_aggregation_only_action.triggered.connect(lambda: self.run_aggregation_only(item))
+            menu.addAction(run_aggregation_only_action)
+
+            run_insights_only_action = QAction("Run Insights Only", self)
+            run_insights_only_action.setToolTip(
+                "Re-run only post-processing insights (population scoring, "
+                "opportunities masking, subnational aggregation) without "
+                "re-running any aggregation workflows."
+            )
+            run_insights_only_action.triggered.connect(lambda: self.run_insights_only(item))
+            menu.addAction(run_insights_only_action)
+
             menu.addAction(open_working_directory_action)
             menu.addAction(remove_unused_layers_action)
 
@@ -2131,6 +2151,89 @@ class TreePanel(QWidget):
         """
         # Assuming column 1 is where status updates are shown
         item.setData(1, status)
+
+    def run_aggregation_only(self, item):
+        """Run only the aggregation workflows (dimensions + analysis) without reprocessing indicators.
+
+        This allows users to re-aggregate after changing weights or settings
+        without triggering a full reprocessing of all indicator workflows,
+        which can take many hours.
+
+        See: https://github.com/worldbank/GEEST/issues/41
+
+        Args:
+            item: The analysis item to run aggregation for.
+        """
+        self.run_only_incomplete = False
+        self.workflow_scope_item = item
+
+        # Count only aggregation-level workflows
+        items_to_run = 0
+        items_to_run += len(item.getDescendantFactors(include_completed=True, include_disabled=False))
+        items_to_run += len(item.getDescendantDimensions(include_completed=True))
+        items_to_run += len(item.getDescendantAnalyses(include_completed=True))
+        self.items_to_run = items_to_run
+        log_message(f"Total aggregation workflows to run: {self.items_to_run}")
+
+        # Queue only factor aggregation, dimension aggregation, and analysis aggregation
+        self.workflow_queue = ["factors", "dimensions", "analysis"]
+        self.overall_progress_bar.setVisible(True)
+        self.workflow_progress_bar.setVisible(True)
+        self.status_label.setVisible(True)
+        self.status_label.setText("Running aggregation only...")
+        self.prepare_analysis_button.setVisible(False)
+        self.help_button.setVisible(False)
+        self.project_button.setVisible(False)
+        self.overall_progress_bar.setValue(0)
+        self.overall_progress_bar.setMaximum(self.items_to_run)
+        self.workflow_progress_bar.setValue(0)
+        self.run_next_workflow_queue()
+
+    def run_insights_only(self, item):
+        """Run only the post-processing insights without re-running any aggregation workflows.
+
+        This runs the population scoring, opportunities masking, and subnational
+        aggregation steps. Useful when users change population layers, opportunity
+        masks, or aggregation boundaries but the GeoE3 score itself hasn't changed.
+
+        See: https://github.com/worldbank/GEEST/issues/41
+
+        Args:
+            item: The analysis item to calculate insights for.
+        """
+        if not self.working_directory:
+            log_message(
+                "No working directory set, cannot run insights.",
+                tag="Geest",
+                level=Qgis.Warning,
+            )
+            return
+
+        # Verify that the analysis has been run at least once
+        result_file = item.attribute("result_file", "")
+        if not result_file:
+            log_message(
+                "Analysis has not been run yet. Please run the full analysis first.",
+                tag="Geest",
+                level=Qgis.Warning,
+            )
+            return
+
+        log_message("Running insights only (population, masking, subnational aggregation)...")
+        self.status_label.setVisible(True)
+        self.status_label.setText("Running insights...")
+        self.prepare_analysis_button.setVisible(False)
+        self.help_button.setVisible(False)
+        self.project_button.setVisible(False)
+
+        self.calculate_analysis_insights(item)
+
+        self.status_label.setVisible(False)
+        self.status_label.setText("")
+        self.prepare_analysis_button.setVisible(True)
+        self.help_button.setVisible(True)
+        self.project_button.setVisible(True)
+        log_message("Insights processing completed.")
 
     def run_all(self):
         """Run all workflows in the tree, regardless of their status."""
