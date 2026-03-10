@@ -1594,38 +1594,40 @@ class StudyAreaProcessingTask(QgsTask):
         geometry_bbox = geom.GetEnvelope()  # (xmin, xmax, ymin, ymax)
         aligned_bbox = self.transform_and_align_bbox(geometry_bbox)
 
-        # Save the bounding box for this geometry
-        self.save_bbox_polygon("study_area_bboxes", aligned_bbox, normalized_name)
-
-        # Add a row to the tracking table
-        self.add_row_to_status_tracking_table(normalized_name)
-
         # If needed, transform the geometry to target CRS
         # (Only if we have the coordinate transform)
         if self.coord_transform:
             geom.Transform(self.coord_transform)
 
-        # Check GHSL intersection
+        # Check GHSL intersection before saving any polygons
+        # This prevents generating blank polygons with no data (issue #52)
         intersects_ghsl = self.check_ghsl_intersection(geom)
         log_message(f"{normalized_name} intersects GHSL: {intersects_ghsl}")
 
-        # Save the geometry (in the target CRS) to "study_area_polygons"
-        self.save_geometry_to_geopackage("study_area_polygons", geom, normalized_name, intersects_ghsl)
-        self.set_status_tracking_table_value(normalized_name, "geometry_processed", 1)
-
-        # Check if we should filter areas without GHSL settlements
+        # Filter areas without GHSL settlements before saving polygons/bboxes
+        # so that blank polygons are never written to the GeoPackage
         filter_enabled = bool(setting(key="filter_study_areas_by_ghsl", default=True))
         if filter_enabled and not intersects_ghsl:
             log_message(
                 f"Skipping {normalized_name} - no GHSL settlements found (filter_study_areas_by_ghsl=True)",
                 level="INFO",
             )
-            # Update progress counter and return early
+            # Update progress counter and return early without saving any polygons
             self.counter += 1
             progress = int((self.counter / self.parts_count) * 100)
             self.setProgress(progress)
             log_message(f"XXXXXXXXXXXX   Progress: {progress}% XXXXXXXXXXXXXXXXXXXXXXX")
             return
+
+        # Save the bounding box for this geometry (only for areas with data)
+        self.save_bbox_polygon("study_area_bboxes", aligned_bbox, normalized_name)
+
+        # Add a row to the tracking table
+        self.add_row_to_status_tracking_table(normalized_name)
+
+        # Save the geometry (in the target CRS) to "study_area_polygons"
+        self.save_geometry_to_geopackage("study_area_polygons", geom, normalized_name, intersects_ghsl)
+        self.set_status_tracking_table_value(normalized_name, "geometry_processed", 1)
 
         # Create the grid
         log_message(f"Creating vector grid for {normalized_name}.")
