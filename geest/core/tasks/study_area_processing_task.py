@@ -2243,9 +2243,6 @@ class StudyAreaProcessingTask(QgsTask):
             if writer_stopped:
                 log_message("Unified writer stopped and database flushed")
 
-        # Tag grid cells as low population using GHSL data
-        self.tag_grid_cells_by_population(normalized_name)
-
         # Print out metrics summary
         log_message("=== Metrics Summary ===")
         for k, v in self.metrics.items():
