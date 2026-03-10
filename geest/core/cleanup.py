@@ -10,7 +10,6 @@ Addresses: https://github.com/worldbank/GEEST/issues/55
 """
 
 import os
-import shutil
 import traceback
 
 from qgis.core import Qgis
