@@ -173,6 +173,45 @@ class OSMDownloaderTask(QgsTask):
                     level=Qgis.Info,
                 )
 
+    def _load_clip_layer(self) -> Optional[QgsVectorLayer]:
+        """Load the study area polygons layer for clipping OSM data to the AOI.
+
+        Looks for a study_area.gpkg file in the working directory and loads
+        the study_area_polygons layer from it. This layer represents the actual
+        AOI boundary used to clip OSM data that was downloaded via bounding box.
+
+        Returns:
+            QgsVectorLayer if found and valid, None otherwise.
+        """
+        study_area_gpkg = os.path.join(self.working_dir, "study_area", "study_area.gpkg")
+        if not os.path.exists(study_area_gpkg):
+            log_message(
+                "Study area GeoPackage not found, skipping AOI clipping.",
+                tag="Geest",
+                level=Qgis.Warning,
+            )
+            return None
+
+        clip_layer = QgsVectorLayer(
+            f"{study_area_gpkg}|layername=study_area_polygons",
+            "study_area_polygons",
+            "ogr",
+        )
+        if clip_layer.isValid() and clip_layer.featureCount() > 0:
+            log_message(
+                f"Loaded study area polygons for AOI clipping " f"({clip_layer.featureCount()} features).",
+                tag="Geest",
+                level=Qgis.Info,
+            )
+            return clip_layer
+
+        log_message(
+            "Study area polygons layer not valid or empty, " "skipping AOI clipping.",
+            tag="Geest",
+            level=Qgis.Warning,
+        )
+        return None
+
     def run(self) -> bool:
         """
         Main entry point - executes in worker thread.
@@ -191,6 +230,9 @@ class OSMDownloaderTask(QgsTask):
             if self.output_crs:
                 log_message(f"Using CRS: {self.output_crs.authid()} for OSM download", tag="Geest", level=Qgis.Info)
 
+            # Load the study area polygons for clipping OSM data to the AOI
+            clip_layer = self._load_clip_layer()
+
             self.progress_updated.emit("Creating downloader...")
             downloader = OSMDownloaderFactory.get_osm_downloader(
                 extents=self.layer_extent,
@@ -201,6 +243,7 @@ class OSMDownloaderTask(QgsTask):
                 use_cache=self.use_cache,
                 delete_gpkg=self.delete_gpkg,
                 feedback=self.feedback,
+                clip_layer=clip_layer,
             )
 
             self.progress_updated.emit("Processing OSM data...")

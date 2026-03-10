@@ -30,6 +30,7 @@ class OSMGreenSpaceDownloader(OSMDataDownloaderBase):
         use_cache: bool = False,
         delete_gpkg: bool = True,
         feedback=None,
+        clip_layer=None,
     ):
         """
         Initialize the OSM Green Space downloader.
@@ -51,6 +52,7 @@ class OSMGreenSpaceDownloader(OSMDataDownloaderBase):
             use_cache=use_cache,
             delete_gpkg=delete_gpkg,
             feedback=feedback,
+            clip_layer=clip_layer,
         )
         # Set the output type - green spaces are typically polygons
         # Use mixed_to_point to handle both points and polygons, converting polygons to centroids

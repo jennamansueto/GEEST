@@ -42,6 +42,7 @@ class OSMDownloaderFactory:
         use_cache: bool = False,
         delete_gpkg: bool = True,
         feedback=None,
+        clip_layer=None,
     ):
         if download_type == OSMDownloadType.ACTIVE_TRANSPORT:
             return OSMActiveTransportDownloader(
@@ -52,6 +53,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.PUBLIC_TRANSPORT:
             return OSMPublicTransportDownloader(
@@ -62,6 +64,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.EDUCATION:
             return OSMEducationDownloader(
@@ -72,6 +75,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.FINANCIAL:
             return OSMFinancialDownloader(
@@ -82,6 +86,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.KINDERGARTEN:
             return OSMKindergartenDownloader(
@@ -92,6 +97,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.PRIMARY_SCHOOL:
             return OSMPrimarySchoolDownloader(
@@ -102,6 +108,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.PHARMACY:
             return OSMPharmacyDownloader(
@@ -112,6 +119,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.GROCERY:
             return OSMGroceryDownloader(
@@ -122,6 +130,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.GREEN_SPACE:
             return OSMGreenSpaceDownloader(
@@ -132,6 +141,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.HEALTH_FACILITY:
             return OSMHealthFacilityDownloader(
@@ -142,6 +152,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         elif download_type == OSMDownloadType.WATER_POINT:
             return OSMWaterPointDownloader(
@@ -152,6 +163,7 @@ class OSMDownloaderFactory:
                 use_cache=use_cache,
                 delete_gpkg=delete_gpkg,
                 feedback=feedback,
+                clip_layer=clip_layer,
             )
         else:
             raise ValueError(f"Unsupported download type: {download_type}")

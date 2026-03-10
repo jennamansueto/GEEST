@@ -27,6 +27,7 @@ class OSMPrimarySchoolDownloader(OSMDataDownloaderBase):
         use_cache: bool = False,
         delete_gpkg: bool = True,
         feedback=None,
+        clip_layer=None,
     ):
         """
         Initialize the OSM Primary School downloader.
@@ -48,6 +49,7 @@ class OSMPrimarySchoolDownloader(OSMDataDownloaderBase):
             use_cache=use_cache,
             delete_gpkg=delete_gpkg,
             feedback=feedback,
+            clip_layer=clip_layer,
         )
         # Set the output type - schools can be points or polygons (buildings)
         # Use mixed_to_point to handle both and convert polygons to centroids

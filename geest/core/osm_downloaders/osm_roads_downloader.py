@@ -29,6 +29,7 @@ class OSMRoadsDownloader(OSMDataDownloaderBase):
         use_cache: bool = False,
         delete_gpkg: bool = True,
         feedback: Optional[QgsFeedback] = None,
+        clip_layer=None,
     ):
         """
         Initialize the OSMRoadsDownloader class.
@@ -44,6 +45,7 @@ class OSMRoadsDownloader(OSMDataDownloaderBase):
             use_cache=use_cache,
             delete_gpkg=delete_gpkg,
             feedback=feedback,
+            clip_layer=clip_layer,
         )
         # set the output type to line
         # note the timeout - 60s needed to allow for larger country queries
