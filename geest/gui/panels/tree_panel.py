@@ -2226,14 +2226,21 @@ class TreePanel(QWidget):
         self.help_button.setVisible(False)
         self.project_button.setVisible(False)
 
-        self.calculate_analysis_insights(item)
-
-        self.status_label.setVisible(False)
-        self.status_label.setText("")
-        self.prepare_analysis_button.setVisible(True)
-        self.help_button.setVisible(True)
-        self.project_button.setVisible(True)
-        log_message("Insights processing completed.")
+        try:
+            self.calculate_analysis_insights(item)
+        except Exception as e:
+            log_message(
+                f"Failed to run insights: {e}",
+                tag="Geest",
+                level=Qgis.Warning,
+            )
+        finally:
+            self.status_label.setVisible(False)
+            self.status_label.setText("")
+            self.prepare_analysis_button.setVisible(True)
+            self.help_button.setVisible(True)
+            self.project_button.setVisible(True)
+            log_message("Insights processing completed.")
 
     def run_all(self):
         """Run all workflows in the tree, regardless of their status."""
