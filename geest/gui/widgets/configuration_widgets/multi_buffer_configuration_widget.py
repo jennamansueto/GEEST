@@ -343,6 +343,9 @@ class MultiBufferConfigurationWidget(BaseConfigurationWidget):
             self.travel_mode_group.setEnabled(enabled)
             self.measurement_group.setEnabled(enabled)
             self.travel_increments_layout.setEnabled(enabled)
+            # Re-apply ORS constraints so driving/time stay disabled when ORS is off
+            if enabled:
+                self._apply_ors_constraints()
         except Exception as e:
             log_message(
                 f"Error in set_internal_widgets_enabled: {e}",
