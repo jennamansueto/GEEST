@@ -1642,6 +1642,9 @@ class StudyAreaProcessingTask(QgsTask):
         self.set_status_tracking_table_value(normalized_name, "grid_processed", 1)
         self.set_status_tracking_table_value(normalized_name, "grid_creation_duration_secs", time.time() - start_time)
 
+        # Tag grid cells as low population using GHSL data
+        self.tag_grid_cells_by_population(normalized_name)
+
         log_message(f"Creating clip polygon for {normalized_name}.")
         start_time = time.time()
         self.create_clip_polygon(geom, aligned_bbox, normalized_name)
@@ -2240,6 +2243,9 @@ class StudyAreaProcessingTask(QgsTask):
             if writer_stopped:
                 log_message("Unified writer stopped and database flushed")
 
+        # Tag grid cells as low population using GHSL data
+        self.tag_grid_cells_by_population(normalized_name)
+
         # Print out metrics summary
         log_message("=== Metrics Summary ===")
         for k, v in self.metrics.items():
@@ -2466,6 +2472,11 @@ class StudyAreaProcessingTask(QgsTask):
                 field_defn = ogr.FieldDefn("area_name", ogr.OFTString)
                 layer.CreateField(field_defn)
 
+                # Add low_population field for GHSL-based tagging
+                field_defn = ogr.FieldDefn("low_population", ogr.OFTInteger)
+                field_defn.SetDefault("0")
+                layer.CreateField(field_defn)
+
                 # Add H3 fields for regional scale
                 if self.analysis_scale == "regional":
 
@@ -2479,6 +2490,106 @@ class StudyAreaProcessingTask(QgsTask):
             ds = None
         finally:
             self.gpkg_lock.unlock()
+
+    ##########################################################################
+    # Tag grid cells by population (GHSL)
+    ##########################################################################
+    def tag_grid_cells_by_population(self, normalized_name):
+        """Tag grid cells as low population based on GHSL settlement data.
+
+        After grid creation, this method checks each grid cell for the given
+        area against the GHSL settlements layer. Grid cells that do not
+        intersect any GHSL settlement polygon are tagged as low population
+        (low_population = 1). Cells that intersect settlements remain tagged
+        as populated (low_population = 0).
+
+        GHSL classes 10 (water) and 11 (very low density) have already been
+        reclassified to 0 during GHSL processing, so the settlement polygons
+        represent only populated areas (all other GHSL classes).
+
+        Args:
+            normalized_name: Name of the area whose grid cells to tag.
+        """
+        if not hasattr(self, "ghsl_layer_name") or self.ghsl_layer_name is None:
+            log_message(
+                "GHSL layer not available, skipping low population tagging "
+                f"for {normalized_name} (all cells default to populated)",
+                level="INFO",
+            )
+            return
+
+        log_message(f"Tagging grid cells by population for {normalized_name}...")
+
+        ds = None
+        try:
+            ds = ogr.Open(self.gpkg_path, 1)  # Open for update
+            if not ds:
+                log_message(
+                    "Could not open GeoPackage for population tagging",
+                    level="WARNING",
+                )
+                return
+
+            grid_layer = ds.GetLayerByName("study_area_grid")
+            if not grid_layer:
+                log_message("study_area_grid layer not found", level="WARNING")
+                ds = None
+                return
+
+            ghsl_layer = ds.GetLayerByName(self.ghsl_layer_name)
+            if not ghsl_layer:
+                log_message(
+                    f"GHSL layer '{self.ghsl_layer_name}' not found, " "skipping population tagging",
+                    level="WARNING",
+                )
+                ds = None
+                return
+
+            # Filter grid to only this area's cells
+            grid_layer.SetAttributeFilter(f"area_name = '{normalized_name}'")
+            total_cells = grid_layer.GetFeatureCount()
+            log_message(f"Tagging {total_cells} grid cells for {normalized_name}")
+
+            tagged_low = 0
+            grid_layer.ResetReading()
+            for grid_feature in grid_layer:
+                grid_geom = grid_feature.GetGeometryRef()
+                if not grid_geom:
+                    continue
+
+                # Use spatial filter on GHSL layer for efficient lookup
+                ghsl_layer.SetSpatialFilter(grid_geom)
+                intersects = False
+                for ghsl_feature in ghsl_layer:
+                    ghsl_geom = ghsl_feature.GetGeometryRef()
+                    if ghsl_geom and grid_geom.Intersects(ghsl_geom):
+                        intersects = True
+                        break
+
+                if not intersects:
+                    grid_feature.SetField("low_population", 1)
+                    grid_layer.SetFeature(grid_feature)
+                    tagged_low += 1
+
+                ghsl_layer.SetSpatialFilter(None)
+
+            grid_layer.SetAttributeFilter(None)
+            grid_layer.ResetReading()
+            ds.FlushCache()
+            ds = None
+
+            log_message(
+                f"Population tagging complete for {normalized_name}: "
+                f"{tagged_low}/{total_cells} cells tagged as low population"
+            )
+
+        except Exception as e:
+            log_message(
+                f"Error tagging grid cells by population for {normalized_name}: {str(e)}",
+                level="WARNING",
+            )
+            if ds:
+                ds = None
 
     ##########################################################################
     # Create Clip Polygon
