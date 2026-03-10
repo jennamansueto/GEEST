@@ -282,20 +282,21 @@ class OSMDataDownloaderBase(ABC):
         downloaded data, the clip layer is reprojected automatically by the
         QGIS processing algorithm.
 
-        Raises:
-            RuntimeError: If the clipping operation fails.
+        Note:
+            Clipping failures are caught and logged as warnings without
+            re-raising, so a failed clip does not break the download.
         """
         if not self.clip_layer or not self.clip_layer.isValid():
             log_message(
                 "Clip layer is not valid, skipping AOI clipping.",
-                level="WARNING",
+                level=Qgis.Warning,
             )
             return
 
         if self.clip_layer.featureCount() == 0:
             log_message(
                 "Clip layer has no features, skipping AOI clipping.",
-                level="WARNING",
+                level=Qgis.Warning,
             )
             return
 
@@ -310,7 +311,7 @@ class OSMDataDownloaderBase(ABC):
         if not input_layer.isValid():
             log_message(
                 f"Could not load OSM layer for clipping: {layer_uri}",
-                level="WARNING",
+                level=Qgis.Warning,
             )
             return
 
@@ -321,17 +322,29 @@ class OSMDataDownloaderBase(ABC):
             # Use a temporary output then replace the original
             clipped_output = self.output_path.replace(".gpkg", "_clipped.gpkg")
 
+            # For line data, specify the layer name explicitly so downstream
+            # code that opens the GeoPackage with |layername=self.filename works.
+            if self.output_type == "line":
+                output_uri = f"ogr:dbname='{clipped_output}' table=\"{self.filename}\" (geom)"  # noqa E231
+            else:
+                output_uri = clipped_output
+
             result = processing.run(
                 "native:clip",
                 {
                     "INPUT": input_layer,
                     "OVERLAY": self.clip_layer,
-                    "OUTPUT": clipped_output,
+                    "OUTPUT": output_uri,
                 },
             )
 
             if result and "OUTPUT" in result:
-                clipped_layer = QgsVectorLayer(result["OUTPUT"], "clipped_check", "ogr")
+                # For line data, load the clipped layer using the explicit layer name
+                if self.output_type == "line":
+                    clipped_uri = f"{clipped_output}|layername={self.filename}"
+                else:
+                    clipped_uri = result["OUTPUT"]
+                clipped_layer = QgsVectorLayer(clipped_uri, "clipped_check", "ogr")
                 feature_count_after = clipped_layer.featureCount()
                 log_message(
                     f"Features after clipping: {feature_count_after} "
@@ -350,10 +363,10 @@ class OSMDataDownloaderBase(ABC):
             else:
                 log_message(
                     "Clipping operation did not produce output.",
-                    level="WARNING",
+                    level=Qgis.Warning,
                 )
         except Exception as e:
-            log_message(f"Error clipping OSM data to AOI: {e}", level="WARNING")
+            log_message(f"Error clipping OSM data to AOI: {e}", level=Qgis.Warning)
             # Clean up temporary file if it exists
             clipped_output = self.output_path.replace(".gpkg", "_clipped.gpkg")
             if os.path.exists(clipped_output):
