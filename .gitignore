@@ -108,3 +108,8 @@ qgis_memory_chart.png
 geest/extlibs/*
 !geest/extlibs/.gitkeep
 PROMPT.log
+
+# SQLite/GeoPackage WAL files (created when QGIS libraries are loaded)
+*.gpkg-shm
+*.gpkg-wal
+symbology-style.db
