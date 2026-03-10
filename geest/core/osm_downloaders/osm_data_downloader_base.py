@@ -357,9 +357,25 @@ class OSMDataDownloaderBase(ABC):
 
                 # Replace the original file with the clipped version
                 if os.path.exists(clipped_output):
-                    os.remove(self.output_path)
-                    os.rename(clipped_output, self.output_path)
-                    log_message(f"Clipped OSM data written to: {self.output_path}")
+                    original_removed = False
+                    try:
+                        os.remove(self.output_path)
+                        original_removed = True
+                        os.rename(clipped_output, self.output_path)
+                        log_message(f"Clipped OSM data written to: {self.output_path}")
+                    except OSError as swap_err:
+                        if original_removed and os.path.exists(clipped_output):
+                            # Original is gone; keep the clipped file as the output
+                            os.rename(clipped_output, self.output_path)
+                            log_message(
+                                f"Recovered clipped output after swap error: {swap_err}",
+                                level=Qgis.Warning,
+                            )
+                        elif not original_removed:
+                            log_message(
+                                f"Could not replace original with clipped output: {swap_err}",
+                                level=Qgis.Warning,
+                            )
             else:
                 log_message(
                     "Clipping operation did not produce output.",
@@ -367,9 +383,10 @@ class OSMDataDownloaderBase(ABC):
                 )
         except Exception as e:
             log_message(f"Error clipping OSM data to AOI: {e}", level=Qgis.Warning)
-            # Clean up temporary file if it exists
+            # Only clean up the temp file if the original still exists;
+            # otherwise the clipped file is the only remaining data.
             clipped_output = self.output_path.replace(".gpkg", "_clipped.gpkg")
-            if os.path.exists(clipped_output):
+            if os.path.exists(clipped_output) and os.path.exists(self.output_path):
                 try:
                     os.remove(clipped_output)
                 except OSError:

@@ -173,7 +173,7 @@ class OSMDownloaderTask(QgsTask):
                     level=Qgis.Info,
                 )
 
-    def _load_clip_layer(self) -> QgsVectorLayer:
+    def _load_clip_layer(self) -> Optional[QgsVectorLayer]:
         """Load the study area polygons layer for clipping OSM data to the AOI.
 
         Looks for a study_area.gpkg file in the working directory and loads
