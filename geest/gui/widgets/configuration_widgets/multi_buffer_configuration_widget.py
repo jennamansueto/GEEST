@@ -219,9 +219,39 @@ class MultiBufferConfigurationWidget(BaseConfigurationWidget):
             self.distance_radio.toggled.connect(self.validate_increments_input)
             self.increments_input.textChanged.connect(self.validate_increments_input)
 
+            # Gray out ORS-only options when ORS is disabled
+            self._apply_ors_constraints()
+
         except Exception as e:
             log_message(f"Error in add_internal_widgets: {e}", level=Qgis.Critical)
             log_message(traceback.format_exc(), level=Qgis.Critical)
+
+    def _apply_ors_constraints(self) -> None:
+        """
+        Disable driving mode and time-based measurement when ORS is not enabled.
+
+        These options require the ORS routing engine. When ORS is disabled
+        (i.e. the user chose native/local network analysis), only walking
+        mode with distance-based measurement is available.
+        """
+        use_ors = setting("use_ors_for_accessibility", False)
+        if isinstance(use_ors, str):
+            use_ors = use_ors.lower() in ("1", "true", "yes", "y", "on")
+
+        if not use_ors:
+            ors_tooltip = "This option requires ORS to be enabled in the ORS settings panel."
+
+            # Disable driving mode and force walking
+            self.driving_radio.setEnabled(False)
+            self.driving_radio.setToolTip(ors_tooltip)
+            if self.driving_radio.isChecked():
+                self.walking_radio.setChecked(True)
+
+            # Disable time-based measurement and force distance
+            self.time_radio.setEnabled(False)
+            self.time_radio.setToolTip(ors_tooltip)
+            if self.time_radio.isChecked():
+                self.distance_radio.setChecked(True)
 
     def validate_increments_input(self) -> bool:
         """
@@ -313,6 +343,9 @@ class MultiBufferConfigurationWidget(BaseConfigurationWidget):
             self.travel_mode_group.setEnabled(enabled)
             self.measurement_group.setEnabled(enabled)
             self.travel_increments_layout.setEnabled(enabled)
+            # Re-apply ORS constraints so driving/time stay disabled when ORS is off
+            if enabled:
+                self._apply_ors_constraints()
         except Exception as e:
             log_message(
                 f"Error in set_internal_widgets_enabled: {e}",
