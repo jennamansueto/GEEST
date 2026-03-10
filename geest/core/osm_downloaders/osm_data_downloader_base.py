@@ -63,6 +63,7 @@ class OSMDataDownloaderBase(ABC):
         use_cache: bool = False,
         delete_gpkg: bool = True,
         feedback: QgsFeedback = None,
+        clip_layer: QgsVectorLayer = None,
     ):
         """Initialize the OSMDataDownloaderBase class.
 
@@ -74,6 +75,9 @@ class OSMDataDownloaderBase(ABC):
             use_cache: Whether to use cached data if available.
             delete_gpkg: Whether to delete existing GeoPackage before writing.
             feedback: QgsFeedback object for progress reporting.
+            clip_layer: Optional QgsVectorLayer for clipping OSM data to the AOI
+                boundary after download. When provided, downloaded features outside
+                the AOI boundary are removed.
 
         Raises:
             ValueError: If extents or output_path is not set.
@@ -92,6 +96,7 @@ class OSMDataDownloaderBase(ABC):
         self.use_cache = use_cache
         self.delete_gpkg = delete_gpkg
         self.feedback = feedback
+        self.clip_layer = clip_layer  # Optional AOI boundary for spatial clipping
 
         # Use the base name of the output path + .xml to store the overpass response
         self.output_xml_path = output_path.replace(".gpkg", ".xml")
@@ -228,6 +233,8 @@ class OSMDataDownloaderBase(ABC):
         """Process the downloaded OSM data and save it as a GeoPackage.
 
         This method will call the appropriate processing method based on the output type.
+        If a clip_layer was provided, the output is spatially clipped to the AOI boundary
+        after processing.
 
         Raises:
             ValueError: If output_type is invalid.
@@ -256,6 +263,105 @@ class OSMDataDownloaderBase(ABC):
                 raise e
         else:
             raise ValueError("Invalid output type. Must be 'point', 'line', 'polygon', or 'mixed_to_point'.")
+
+        # Clip the output to the AOI boundary if a clip layer was provided
+        if self.clip_layer is not None:
+            self._clip_to_aoi()
+
+    def _clip_to_aoi(self) -> None:
+        """Clip the downloaded OSM data to the AOI boundary.
+
+        After OSM data is downloaded using a bounding box query, this method
+        removes features that fall outside the actual Area of Interest (AOI)
+        boundary. This reduces the dataset to only features within the study
+        area, improving both accuracy and processing speed for subsequent
+        analysis steps.
+
+        The clip layer is expected to contain polygon geometries representing
+        the AOI boundary. If CRS differs between the clip layer and the
+        downloaded data, the clip layer is reprojected automatically by the
+        QGIS processing algorithm.
+
+        Raises:
+            RuntimeError: If the clipping operation fails.
+        """
+        if not self.clip_layer or not self.clip_layer.isValid():
+            log_message(
+                "Clip layer is not valid, skipping AOI clipping.",
+                level="WARNING",
+            )
+            return
+
+        if self.clip_layer.featureCount() == 0:
+            log_message(
+                "Clip layer has no features, skipping AOI clipping.",
+                level="WARNING",
+            )
+            return
+
+        # Determine the layer name to clip in the output GeoPackage
+        # For line data, the final reprojected layer uses self.filename
+        # For point/polygon/mixed data, the layer is the default layer in the gpkg
+        layer_uri = self.output_path
+        if self.output_type == "line":
+            layer_uri = f"{self.output_path}|layername={self.filename}"
+
+        input_layer = QgsVectorLayer(layer_uri, "osm_to_clip", "ogr")
+        if not input_layer.isValid():
+            log_message(
+                f"Could not load OSM layer for clipping: {layer_uri}",
+                level="WARNING",
+            )
+            return
+
+        feature_count_before = input_layer.featureCount()
+        log_message(f"Clipping OSM data to AOI boundary. " f"Features before clipping: {feature_count_before}")
+
+        try:
+            # Use a temporary output then replace the original
+            clipped_output = self.output_path.replace(".gpkg", "_clipped.gpkg")
+
+            result = processing.run(
+                "native:clip",
+                {
+                    "INPUT": input_layer,
+                    "OVERLAY": self.clip_layer,
+                    "OUTPUT": clipped_output,
+                },
+            )
+
+            if result and "OUTPUT" in result:
+                clipped_layer = QgsVectorLayer(result["OUTPUT"], "clipped_check", "ogr")
+                feature_count_after = clipped_layer.featureCount()
+                log_message(
+                    f"Features after clipping: {feature_count_after} "
+                    f"(removed {feature_count_before - feature_count_after} "
+                    f"features outside AOI)"
+                )
+                # Release references before file operations
+                del clipped_layer
+                del input_layer
+
+                # Replace the original file with the clipped version
+                if os.path.exists(clipped_output):
+                    os.remove(self.output_path)
+                    os.rename(clipped_output, self.output_path)
+                    log_message(f"Clipped OSM data written to: {self.output_path}")
+            else:
+                log_message(
+                    "Clipping operation did not produce output.",
+                    level="WARNING",
+                )
+        except Exception as e:
+            log_message(f"Error clipping OSM data to AOI: {e}", level="WARNING")
+            # Clean up temporary file if it exists
+            clipped_output = self.output_path.replace(".gpkg", "_clipped.gpkg")
+            if os.path.exists(clipped_output):
+                try:
+                    os.remove(clipped_output)
+                except OSError:
+                    pass
+            # Don't re-raise - clipping failure shouldn't break the download
 
     def process_line_response(self) -> None:
         """
