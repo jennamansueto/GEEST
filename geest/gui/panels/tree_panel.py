@@ -824,6 +824,15 @@ class TreePanel(QWidget):
             menu.addAction(clear_item_action)
             menu.addAction(clear_results_action)
             menu.addAction(run_item_action)
+
+            run_aggregation_only_action = QAction("Run Aggregation Only", self)
+            run_aggregation_only_action.triggered.connect(lambda: self.run_aggregation_only(item))
+            menu.addAction(run_aggregation_only_action)
+
+            run_insights_only_action = QAction("Run Insights Only", self)
+            run_insights_only_action.triggered.connect(lambda: self.run_insights_only(item))
+            menu.addAction(run_insights_only_action)
+
             menu.addAction(open_working_directory_action)
             menu.addAction(remove_unused_layers_action)
 
@@ -2120,6 +2129,73 @@ class TreePanel(QWidget):
         log_message("############################################")
         log_message("END")
         log_message("############################################")
+
+    def run_aggregation_only(self, item):
+        """Run only factor, dimension, and analysis aggregation without reprocessing indicators.
+
+        This allows users to efficiently re-aggregate after changing weights
+        without triggering a full reprocessing of all indicator workflows.
+
+        Args:
+            item: The analysis item to run aggregation for.
+        """
+        self.items_to_run = 0
+        self.workflow_scope_item = item
+        self.run_only_incomplete = False
+
+        workflow_queue = ["factors", "dimensions", "analysis"]
+
+        items_to_run = 0
+        items_to_run += len(item.getDescendantFactors(include_completed=True, include_disabled=False))
+        items_to_run += len(item.getDescendantDimensions(include_completed=True))
+        items_to_run += len(item.getDescendantAnalyses(include_completed=True))
+        self.items_to_run = items_to_run
+        log_message(f"Total aggregation workflows to run: {self.items_to_run}")
+
+        self.overall_progress_bar.setVisible(True)
+        self.workflow_progress_bar.setVisible(True)
+        self.status_label.setVisible(True)
+        self.status_label.setText("Running aggregation only...")
+        self.prepare_analysis_button.setVisible(False)
+        self.help_button.setVisible(False)
+        self.project_button.setVisible(False)
+        self.overall_progress_bar.setValue(0)
+        self.overall_progress_bar.setMaximum(self.items_to_run)
+        self.workflow_progress_bar.setValue(0)
+
+        self.workflow_queue = workflow_queue
+        self.run_next_workflow_queue()
+
+    def run_insights_only(self, item):
+        """Run only post-processing insights without re-running any aggregation workflows.
+
+        This re-runs population scoring, opportunities masking, and subnational
+        aggregation without re-running factor/dimension/analysis aggregation.
+        Useful when population or mask layers have been changed.
+
+        Args:
+            item: The analysis item to run insights for.
+        """
+        self.overall_progress_bar.setVisible(True)
+        self.workflow_progress_bar.setVisible(True)
+        self.status_label.setVisible(True)
+        self.status_label.setText("Running insights only...")
+        self.prepare_analysis_button.setVisible(False)
+        self.help_button.setVisible(False)
+        self.project_button.setVisible(False)
+        self.overall_progress_bar.setMinimum(0)
+        self.overall_progress_bar.setMaximum(0)  # Indeterminate/bouncing
+
+        try:
+            self.calculate_analysis_insights(item)
+        finally:
+            self.overall_progress_bar.setVisible(False)
+            self.workflow_progress_bar.setVisible(False)
+            self.status_label.setVisible(False)
+            self.status_label.setText("")
+            self.prepare_analysis_button.setVisible(True)
+            self.help_button.setVisible(True)
+            self.project_button.setVisible(True)
 
     def update_tree_item_status(self, item, status):
         """
