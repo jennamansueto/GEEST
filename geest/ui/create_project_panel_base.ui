@@ -417,6 +417,25 @@ When this option is **not selected**, the analysis focuses on generic employment
      </property>
     </widget>
    </item>
+   <item row="15" column="0">
+    <widget class="QLabel" name="processing_info_label">
+     <property name="visible">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignJustify|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
    <item row="16" column="0">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0" rowspan="2">
