@@ -60,14 +60,14 @@ class PolylinePerCellWorkflow(WorkflowBase):
         if not layer_path:
             log_message(
                 "Nothing found in polyline_per_cell_shapefile, trying polygline_per_cell_layer_source.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             layer_path = self.attributes.get("polyline_per_cell_layer_source", None)
             if not layer_path:
                 log_message(
                     "No points layer found in polyline_per_cell_layer_source.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 return False
@@ -96,7 +96,7 @@ class PolylinePerCellWorkflow(WorkflowBase):
         area_features_count = area_features.featureCount()
         log_message(
             f"Features layer for area {index + 1} loaded with {area_features_count} features.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 

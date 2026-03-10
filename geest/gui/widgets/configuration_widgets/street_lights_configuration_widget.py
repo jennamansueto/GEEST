@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""GEEST GUI widgets."""
+"""GeoE3 GUI widgets."""
 
 __copyright__ = "Copyright 2022, Tim Sutton"
 __license__ = "GPL version 3"
@@ -141,7 +141,7 @@ class StreetLightsConfigurationWidget(BaseConfigurationWidget):
         except Exception as e:
             log_message(
                 f"Error in set_internal_widgets_enabled: {e}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
 

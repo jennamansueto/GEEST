@@ -158,7 +158,7 @@ class AnalysisReport(BaseReport):
             bool: True if the page was successfully added, False otherwise.
         """
         if not layer_uri:
-            log_message(f"No layer URI for '{title}', skipping page", tag="Geest")
+            log_message(f"No layer URI for '{title}', skipping page", tag="GeoE3")
             return False
 
         self.make_page(
@@ -172,7 +172,7 @@ class AnalysisReport(BaseReport):
         layer = QgsRasterLayer(layer_uri, title)
 
         if not layer.isValid():
-            log_message(f"Layer {layer_uri} is invalid and cannot be added.", tag="Geest")
+            log_message(f"Layer {layer_uri} is invalid and cannot be added.", tag="GeoE3")
             return True  # Page was created, even if map couldn't be added
 
         # Add the layer to the project temporarily for rendering
@@ -237,7 +237,7 @@ class AnalysisReport(BaseReport):
 
             # Skip dimensions with no used factors
             if not self._has_used_factors(dimension):
-                log_message(f"Skipping dimension '{dim_name}' - no used indicators", tag="Geest")
+                log_message(f"Skipping dimension '{dim_name}' - no used indicators", tag="GeoE3")
                 continue
 
             # Add dimension page with map
@@ -254,7 +254,7 @@ class AnalysisReport(BaseReport):
 
                 # Skip factors with no used indicators
                 if not self._has_used_indicators(factor):
-                    log_message(f"Skipping factor '{factor_name}' - no used indicators", tag="Geest")
+                    log_message(f"Skipping factor '{factor_name}' - no used indicators", tag="GeoE3")
                     continue
 
                 # Add factor page with map
@@ -272,7 +272,7 @@ class AnalysisReport(BaseReport):
                     if analysis_mode == "Do Not Use":
                         log_message(
                             f"Skipping indicator '{indicator.get('indicator', '')}' - analysis_mode is 'Do Not Use'",
-                            tag="Geest",
+                            tag="GeoE3",
                         )
                         continue
 

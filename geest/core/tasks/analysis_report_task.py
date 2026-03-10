@@ -38,7 +38,7 @@ class AnalysisReportTask(QgsTask):
             bool: True if successful, False otherwise.
         """
         try:
-            log_message("Starting analysis report generation...", tag="Geest", level=Qgis.Info)
+            log_message("Starting analysis report generation...", tag="GeoE3", level=Qgis.Info)
 
             report = AnalysisReport(
                 model_path=self.model_path,
@@ -51,14 +51,14 @@ class AnalysisReportTask(QgsTask):
 
             log_message(
                 f"Analysis report generated successfully: {self.pdf_path}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             return True
 
         except Exception as e:
             self.exception = e
-            log_message(f"Error generating analysis report: {e}", tag="Geest", level=Qgis.Critical)
+            log_message(f"Error generating analysis report: {e}", tag="GeoE3", level=Qgis.Critical)
             return False
 
     def finished(self, result: bool):
@@ -79,11 +79,11 @@ class AnalysisReportTask(QgsTask):
                     else:  # Linux
                         subprocess.run(["xdg-open", self.pdf_path], check=False)  # nosec B603 B607
             except Exception as e:
-                log_message(f"Could not open PDF viewer: {e}", tag="Geest", level=Qgis.Warning)
+                log_message(f"Could not open PDF viewer: {e}", tag="GeoE3", level=Qgis.Warning)
         else:
-            log_message("Analysis report generation failed.", tag="Geest", level=Qgis.Critical)
+            log_message("Analysis report generation failed.", tag="GeoE3", level=Qgis.Critical)
 
     def cancel(self):
         """Called when task is cancelled."""
-        log_message("Analysis report generation cancelled.", tag="Geest", level=Qgis.Warning)
+        log_message("Analysis report generation cancelled.", tag="GeoE3", level=Qgis.Warning)
         super().cancel()

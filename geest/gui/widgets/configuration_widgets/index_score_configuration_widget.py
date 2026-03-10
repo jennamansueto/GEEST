@@ -25,7 +25,7 @@ class IndexScoreConfigurationWidget(BaseConfigurationWidget):
             self.info_label: QLabel = QLabel("Fill each polygon with a fixed value")
             self.internal_layout.addWidget(self.info_label)
         except Exception as e:
-            log_message(f"Error in add_internal_widgets: {e}", "Geest", level=Qgis.Critical)
+            log_message(f"Error in add_internal_widgets: {e}", "GeoE3", level=Qgis.Critical)
 
     def get_data(self) -> dict:
         """
@@ -42,7 +42,7 @@ class IndexScoreConfigurationWidget(BaseConfigurationWidget):
         except Exception as e:
             log_message(
                 f"Error in set_internal_widgets_enabled: {e}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
 

@@ -415,7 +415,7 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
 
     def start_osm_download(self) -> None:
         """Start OSM data download process using proper QgsTask integration."""
-        log_message("Starting OSM download...", tag="Geest", level=Qgis.Info)
+        log_message("Starting OSM download...", tag="GeoE3", level=Qgis.Info)
 
         project = QgsProject.instance()
         if not project:
@@ -461,15 +461,15 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
                 extent = transform.transformBoundingBox(extent)
                 log_message(
                     f"Using study area extent, transformed from {source_crs.authid()} to EPSG:4326",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
             else:
-                log_message("Using study area extent (already in EPSG:4326)", tag="Geest", level=Qgis.Info)
+                log_message("Using study area extent (already in EPSG:4326)", tag="GeoE3", level=Qgis.Info)
         else:
             # Fallback: try to get extent from loaded project layers
             log_message(
-                "Could not load study area bboxes, falling back to project layers", tag="Geest", level=Qgis.Warning
+                "Could not load study area bboxes, falling back to project layers", tag="GeoE3", level=Qgis.Warning
             )
             layers = project.mapLayers().values()
             project_crs = project.crs() if project.crs().isValid() else QgsCoordinateReferenceSystem("EPSG:4326")
@@ -501,18 +501,18 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
             return
 
         if self.osm_download_type is None:
-            log_message("No OSM download type set", tag="Geest", level=Qgis.Critical)
+            log_message("No OSM download type set", tag="GeoE3", level=Qgis.Critical)
             return
 
         filename = f"osm_{self.osm_download_type.value}"
         output_file_path = os.path.join(study_area_dir, f"{filename}.gpkg")
         output_crs = QgsCoordinateReferenceSystem("EPSG:4326")
 
-        log_message(f"Output directory: {study_area_dir}", tag="Geest", level=Qgis.Info)
-        log_message(f"Filename: {filename}", tag="Geest", level=Qgis.Info)
-        log_message(f"Full output file path: {output_file_path}", tag="Geest", level=Qgis.Info)
-        log_message(f"Extent: {extent.asWktPolygon()}", tag="Geest", level=Qgis.Info)
-        log_message(f"Output CRS: {output_crs.authid()}", tag="Geest", level=Qgis.Info)
+        log_message(f"Output directory: {study_area_dir}", tag="GeoE3", level=Qgis.Info)
+        log_message(f"Filename: {filename}", tag="GeoE3", level=Qgis.Info)
+        log_message(f"Full output file path: {output_file_path}", tag="GeoE3", level=Qgis.Info)
+        log_message(f"Extent: {extent.asWktPolygon()}", tag="GeoE3", level=Qgis.Info)
+        log_message(f"Output CRS: {output_crs.authid()}", tag="GeoE3", level=Qgis.Info)
 
         if self.osm_download_button:
             self.osm_download_button.setEnabled(False)
@@ -546,12 +546,12 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
             # Add to QGIS task manager (proper architecture)
             QgsApplication.taskManager().addTask(self.osm_task)
 
-            log_message("OSM download task added to QGIS task manager", tag="Geest", level=Qgis.Info)
+            log_message("OSM download task added to QGIS task manager", tag="GeoE3", level=Qgis.Info)
         except Exception as e:
-            log_message(f"Error starting OSM download: {e}", tag="Geest", level=Qgis.Critical)
+            log_message(f"Error starting OSM download: {e}", tag="GeoE3", level=Qgis.Critical)
             import traceback
 
-            log_message(traceback.format_exc(), tag="Geest", level=Qgis.Critical)
+            log_message(traceback.format_exc(), tag="GeoE3", level=Qgis.Critical)
 
             if self.osm_download_button:
                 self.osm_download_button.setEnabled(True)
@@ -567,7 +567,7 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
         Args:
             message: Progress message from the download task.
         """
-        log_message(message, tag="Geest", level=Qgis.Info)
+        log_message(message, tag="GeoE3", level=Qgis.Info)
         if self.osm_download_button:
             if "Processing" in message:
                 self.osm_download_button.setText("Processing...")
@@ -580,12 +580,12 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
         Args:
             gpkg_path: Path to the downloaded GeoPackage file.
         """
-        log_message(f"OSM download completed: {gpkg_path}", tag="Geest", level=Qgis.Info)
+        log_message(f"OSM download completed: {gpkg_path}", tag="GeoE3", level=Qgis.Info)
 
         self._stop_spinner()
         if os.path.isdir(gpkg_path):
             error_msg = f"Expected a file but received a directory: {gpkg_path}"
-            log_message(f"Error: {error_msg}", tag="Geest", level=Qgis.Critical)
+            log_message(f"Error: {error_msg}", tag="GeoE3", level=Qgis.Critical)
             if self.osm_download_button:
                 self.osm_download_button.setText("Error!")
                 self.osm_download_button.setStyleSheet("background-color: #ffcccc; padding: 5px 10px;")
@@ -596,7 +596,7 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
 
         if not os.path.exists(gpkg_path):
             error_msg = f"Download completed but output file not found: {gpkg_path}"
-            log_message(f"Error: {error_msg}", tag="Geest", level=Qgis.Critical)
+            log_message(f"Error: {error_msg}", tag="GeoE3", level=Qgis.Critical)
             if self.osm_download_button:
                 self.osm_download_button.setText("Not Found!")
                 self.osm_download_button.setStyleSheet("background-color: #ffcccc; padding: 5px 10px;")
@@ -610,7 +610,7 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
 
         if layer.isValid():
             QgsProject.instance().addMapLayer(layer)
-            log_message(f"Loaded OSM layer: {layer_name}", tag="Geest", level=Qgis.Info)
+            log_message(f"Loaded OSM layer: {layer_name}", tag="GeoE3", level=Qgis.Info)
             self.layer_combo.setLayer(layer)
 
             if self.osm_download_button:
@@ -619,7 +619,7 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
                 QTimer.singleShot(2000, lambda: self.reset_osm_button())
         else:
             error_msg = f"Downloaded file exists but could not be loaded as a valid layer: {gpkg_path}"
-            log_message(f"Failed to load layer: {error_msg}", tag="Geest", level=Qgis.Critical)
+            log_message(f"Failed to load layer: {error_msg}", tag="GeoE3", level=Qgis.Critical)
             if self.osm_download_button:
                 self.osm_download_button.setText("Load Failed!")
                 self.osm_download_button.setStyleSheet("background-color: #ffcccc; padding: 5px 10px;")
@@ -639,7 +639,7 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
         Args:
             error_message: The error message from the download task.
         """
-        log_message(f"OSM download error: {error_message}", tag="Geest", level=Qgis.Critical)
+        log_message(f"OSM download error: {error_message}", tag="GeoE3", level=Qgis.Critical)
 
         # Mark that we've handled an error to avoid duplicate message from taskTerminated
         self._osm_error_handled = True
@@ -667,10 +667,10 @@ class VectorDataSourceWidget(BaseDataSourceWidget):
         """
         # Skip if error was already handled (avoids duplicate message boxes)
         if getattr(self, "_osm_error_handled", False):
-            log_message("OSM task terminated after error - skipping duplicate message", tag="Geest")
+            log_message("OSM task terminated after error - skipping duplicate message", tag="GeoE3")
             return
 
-        log_message("OSM download was cancelled by user", tag="Geest", level=Qgis.Warning)
+        log_message("OSM download was cancelled by user", tag="GeoE3", level=Qgis.Warning)
 
         self._stop_spinner()
         if self.osm_download_button:

@@ -105,7 +105,7 @@ class ConfigurationWidgetFactory:
                 if value == 1:
                     log_message(
                         f"Factory did not match any widgets for key: {key}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Critical,
                     )
                 return None

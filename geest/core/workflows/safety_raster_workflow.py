@@ -60,14 +60,14 @@ class SafetyRasterWorkflow(WorkflowBase):
         if not layer_name:
             log_message(
                 "Invalid raster found in nighttime_lights_raster, trying nighttime_lights_layer_source.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             layer_name = self.attributes.get("nighttime_lights_layer_source", None)
             if not layer_name:
                 log_message(
                     "No points layer found in nighttime_lights_layer_source.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 return False
@@ -100,7 +100,7 @@ class SafetyRasterWorkflow(WorkflowBase):
         if valid_data is None or len(valid_data) == 0:
             log_message(
                 f"No valid data for area {index}, skipping reclassification",
-                tag="Geest",
+                tag="GeoE3",
                 level=1,
             )
             return None
@@ -109,7 +109,7 @@ class SafetyRasterWorkflow(WorkflowBase):
         reclass_table = self._build_reclassification_table(max_val, median, valid_data)
         log_message(
             f"Reclassification table for area {index}: {reclass_table}",
-            tag="Geest",
+            tag="GeoE3",
             level=0,
         )
 
@@ -157,7 +157,7 @@ class SafetyRasterWorkflow(WorkflowBase):
 
         log_message(
             f"Reclassification for area {index} complete. Saved to {reclassified_raster}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 
@@ -175,7 +175,7 @@ class SafetyRasterWorkflow(WorkflowBase):
 
         # Check if the raster layer loaded successfully
         if not raster_layer.isValid():
-            log_message("Raster layer failed to load", tag="Geest", level=1)
+            log_message("Raster layer failed to load", tag="GeoE3", level=1)
             return None, None, None, None
 
         provider = raster_layer.dataProvider()
@@ -204,7 +204,7 @@ class SafetyRasterWorkflow(WorkflowBase):
             dtype = np.uint8
 
         if dtype is None:
-            log_message("Unsupported data type", tag="Geest", level=1)
+            log_message("Unsupported data type", tag="GeoE3", level=1)
             return None, None, None, None
 
         # Convert QByteArray to a numpy array with the correct dtype
@@ -223,7 +223,7 @@ class SafetyRasterWorkflow(WorkflowBase):
             return max_value, median, percentile_75, valid_data
         else:
             # Handle case with no valid data
-            log_message("No valid data in the raster", tag="Geest", level=1)
+            log_message("No valid data in the raster", tag="GeoE3", level=1)
             return None, None, None, None
 
     def _build_reclassification_table(self, max_val: float, median: float, valid_data: np.ndarray) -> list:
@@ -263,7 +263,7 @@ class SafetyRasterWorkflow(WorkflowBase):
         log_message(
             f"📊 Computing Jenks Natural Breaks classification (max={max_val:.6f}, "
             f"median={median:.6f}, n={len(valid_data)})",
-            tag="Geest",
+            tag="GeoE3",
             level=0,
         )
 
@@ -303,7 +303,7 @@ class SafetyRasterWorkflow(WorkflowBase):
                 f"   Class 4 (High):       {breaks[3]:.3f} - {breaks[4]:.3f}\n"
                 f"   Class 5 (Very High):  {breaks[4]:.3f} - {breaks[5]:.3f}\n"
                 f"   Quality (GVF): {gvf:.4f}",
-                tag="Geest",
+                tag="GeoE3",
                 level=0,
             )
 
@@ -322,7 +322,7 @@ class SafetyRasterWorkflow(WorkflowBase):
                 f"   This may indicate insufficient data variation for meaningful classification.\n"
                 f"   Please verify your nighttime lights raster has valid data with reasonable variation."
             )
-            log_message(error_msg, tag="Geest", level=2)  # Critical
+            log_message(error_msg, tag="GeoE3", level=2)  # Critical
             raise ValueError(error_msg) from e
 
     # Not used in this workflow since we work with rasters

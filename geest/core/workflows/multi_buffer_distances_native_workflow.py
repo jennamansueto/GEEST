@@ -70,14 +70,14 @@ class MultiBufferDistancesNativeWorkflow(WorkflowBase):
         if not self.distances:
             log_message(
                 "Invalid travel distances, using default.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             self.distances = self.attributes.get("default_multi_buffer_distances", None)
             if not self.distances:
                 log_message(
                     "Invalid default travel distances and no default specified.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 raise Exception("Invalid travel distances.")
@@ -89,7 +89,7 @@ class MultiBufferDistancesNativeWorkflow(WorkflowBase):
         except Exception:
             log_message(
                 "Invalid travel distances provided. Distances should be a comma-separated list of up to 5 numbers.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             raise Exception("Invalid travel distances provided.")
@@ -100,14 +100,14 @@ class MultiBufferDistancesNativeWorkflow(WorkflowBase):
         if not layer_path:
             log_message(
                 "Invalid points layer found in multi_buffer_point_shapefile, trying Multi Buffer Point_layer_name.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             layer_path = self.attributes.get("multi_buffer_point_layer_source", None)
             if not layer_path:
                 log_message(
                     f"No points layer found  at multi_buffer_point_layer_source {layer_path}.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 raise Exception("Invalid points layer found.")
@@ -116,7 +116,7 @@ class MultiBufferDistancesNativeWorkflow(WorkflowBase):
         if not self.features_layer.isValid():
             log_message(
                 f"Invalid points layer found in {layer_path}.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             raise Exception("Invalid points layer found.")
@@ -132,7 +132,7 @@ class MultiBufferDistancesNativeWorkflow(WorkflowBase):
         if not self.road_network_layer_path:
             log_message(
                 f"Invalid network layer found in {self.road_network_layer_path}.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             raise Exception("Invalid network layer found.")
@@ -171,7 +171,7 @@ class MultiBufferDistancesNativeWorkflow(WorkflowBase):
         if not isochrones_gpkg:
             log_message(
                 f"No isochrones created for area {index}.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             return False
@@ -550,7 +550,7 @@ class MultiBufferDistancesNativeWorkflow(WorkflowBase):
                 distance_field_index = self.distances.index(distance_field_value)
                 log_message(
                     f"Found {distance_field_value} at index {distance_field_index}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
                 # The list should have max 5 values in it. If the index is greater than 5, set it to 5

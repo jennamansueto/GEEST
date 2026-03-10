@@ -65,14 +65,14 @@ class RasterReclassificationWorkflow(WorkflowBase):
         if not layer_name:
             log_message(
                 "Invalid layer found in environmental_hazards_raster, trying environmental_hazards_layer_source.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             layer_name = self.attributes.get("environmental_hazards_layer_source", None)
             if not layer_name:
                 log_message(
                     "No layer found in environmental_hazards_layer_source.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 return
@@ -187,7 +187,7 @@ class RasterReclassificationWorkflow(WorkflowBase):
 
         log_message(
             f"Reclassification Rules for {self.layer_id}: {self.reclassification_rules}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 
@@ -262,7 +262,7 @@ class RasterReclassificationWorkflow(WorkflowBase):
         processing.run("gdal:cliprasterbymasklayer", clip_params, feedback=QgsProcessingFeedback())
         log_message(
             f"Reclassification for area {index} complete. Saved to {reclassified_raster_path}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 

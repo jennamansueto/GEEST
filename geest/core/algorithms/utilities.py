@@ -178,7 +178,7 @@ def check_and_reproject_layer(
     if fixed_features_layer.crs() != target_crs:
         log_message(
             f"Reprojecting layer from {fixed_features_layer.crs().authid()} to {target_crs.authid()}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         reproject_result = processing.run(
@@ -221,7 +221,7 @@ def combine_rasters_to_vrt(
     if not rasters:
         log_message(
             "No valid raster layers found to combine into VRT.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Warning,
         )
         return
@@ -234,14 +234,14 @@ def combine_rasters_to_vrt(
         else:
             log_message(
                 f"Skipping invalid or non-existent raster: {raster}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
 
     if not checked_rasters:
         log_message(
             "No valid raster layers found to combine into VRT.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Warning,
         )
         return

@@ -184,7 +184,7 @@ class AcledImpactWorkflow(WorkflowBase):
 
         log_message(
             f"Point layer created from CSV saved to {shapefile_path}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 
@@ -329,7 +329,7 @@ class AcledImpactWorkflow(WorkflowBase):
         )["OUTPUT"]
         log_message(
             f"Dissolved areas have {len(dissolve)} features",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         # Step 3: Perform the union to get all overlapping areas
@@ -397,7 +397,7 @@ class AcledImpactWorkflow(WorkflowBase):
         if error[0] == 0:
             log_message(
                 f"Overlay analysis complete, output saved to {full_output_filepath}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
         else:

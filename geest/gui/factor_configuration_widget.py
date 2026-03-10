@@ -38,7 +38,7 @@ class FactorConfigurationWidget(QWidget):
         super().__init__()
         log_message(
             f"Creating FactorConfigurationWidget for guids: {guids}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         self.guids = guids  # List of guids for the indicators that the settings in the config will be applied to
@@ -146,7 +146,7 @@ class FactorConfigurationWidget(QWidget):
             new_data: A dictionary containing the new attribute values to be updated.
         """
         # Log the received data
-        # log_message(f"Received new data: {new_data}", tag="Geest", level=Qgis.Info)
+        # log_message(f"Received new data: {new_data}", tag="GeoE3", level=Qgis.Info)
 
         # Identify changed attributes: keys present in new_data with differing or new values
         if not new_data:
@@ -180,6 +180,6 @@ class FactorConfigurationWidget(QWidget):
             else:
                 log_message(
                     f"GUID {guid} could not be found. Skipping update.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )

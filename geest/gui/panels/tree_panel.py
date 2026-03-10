@@ -413,7 +413,7 @@ class TreePanel(QWidget):
         if self.working_directory is None:
             log_message(
                 "No working directory set, cannot clear workflows.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             return
@@ -430,10 +430,10 @@ class TreePanel(QWidget):
                         f"Failed to delete {file_path}. Reason: {e}",
                         level=Qgis.Critical,
                     )
-        # Also remove the Geest layer group in the QGIS Layers List
+        # Also remove the GeoE3 layer group in the QGIS Layers List
         root = QgsProject.instance().layerTreeRoot()
         for child in root.children():
-            if child.name() == "Geest":
+            if child.name() == "GeoE3":
                 root.removeChildNode(child)
         # Mark all items in the data model as not run
         item = self.model.rootItem
@@ -450,7 +450,7 @@ class TreePanel(QWidget):
         """
         log_message(
             f"Working directory changed to {new_directory}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         self.working_directory = new_directory
@@ -495,13 +495,13 @@ class TreePanel(QWidget):
             except Exception as e:
                 log_message(
                     f"Error loading model.json: {str(e)}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
         else:
             log_message(
                 f"No model.json found in {new_directory}, using default.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             # copy the default model.json to the working directory
@@ -513,7 +513,7 @@ class TreePanel(QWidget):
                 except Exception as e:
                     log_message(
                         f"Error copying master model.json: {str(e)}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Critical,
                     )
             self.load_json()
@@ -575,7 +575,7 @@ class TreePanel(QWidget):
         if not self.working_directory:
             log_message(
                 "No working directory set, cannot save JSON.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
         try:
@@ -603,7 +603,7 @@ class TreePanel(QWidget):
         if not hasattr(self, "working_directory") or not self.working_directory:
             log_message(
                 "reload_and_apply_women_considerations_logic: working_directory not set",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             return
@@ -612,7 +612,7 @@ class TreePanel(QWidget):
         if not os.path.exists(model_path):
             log_message(
                 f"reload_and_apply_women_considerations_logic: model.json not found at {model_path}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             return
@@ -954,7 +954,7 @@ class TreePanel(QWidget):
         if not self.working_directory:
             log_message(
                 "No working directory set, cannot generate analysis report.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             return
@@ -975,7 +975,7 @@ class TreePanel(QWidget):
 
     def on_analysis_report_completed(self):
         """Slot called when analysis report generation completes successfully."""
-        log_message("Analysis report generated successfully.", tag="Geest", level=Qgis.Info)
+        log_message("Analysis report generated successfully.", tag="GeoE3", level=Qgis.Info)
 
         self.overall_progress_bar.setMinimum(0)
         self.overall_progress_bar.setMaximum(100)
@@ -991,7 +991,7 @@ class TreePanel(QWidget):
             else "Unknown error"
         )
 
-        log_message(f"Analysis report generation failed: {error_msg}", tag="Geest", level=Qgis.Critical)
+        log_message(f"Analysis report generation failed: {error_msg}", tag="GeoE3", level=Qgis.Critical)
 
         self.overall_progress_bar.setMinimum(0)
         self.overall_progress_bar.setMaximum(100)
@@ -1522,11 +1522,11 @@ class TreePanel(QWidget):
         gpkg_path = os.path.join(self.working_directory, "study_area", "study_area.gpkg")
         project = QgsProject.instance()
 
-        # Check if 'Geest' group exists, otherwise create it
+        # Check if 'GeoE3' group exists, otherwise create it
         root = project.layerTreeRoot()
-        geest_group = root.findGroup("Geest Study Area")
+        geest_group = root.findGroup("GeoE3 Study Area")
         if geest_group is None:
-            geest_group = root.insertGroup(0, "Geest Study Area")  # Insert at the top of the layers panel
+            geest_group = root.insertGroup(0, "GeoE3 Study Area")  # Insert at the top of the layers panel
 
         layers = [
             "ghsl_settlements",
@@ -1545,7 +1545,7 @@ class TreePanel(QWidget):
             if not layer.isValid():
                 log_message(
                     f"Failed to add '{layer_name}' layer to the map.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
                 continue
@@ -1894,7 +1894,7 @@ class TreePanel(QWidget):
         if not node_index.isValid():
             log_message(
                 f"Failed to find index for item {item} - animation not started",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             return
@@ -1997,7 +1997,7 @@ class TreePanel(QWidget):
         if not node_index.isValid():
             log_message(
                 f"Failed to find index for item {item} - animation not started",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             return

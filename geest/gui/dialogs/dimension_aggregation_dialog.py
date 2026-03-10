@@ -334,7 +334,7 @@ class DimensionAggregationDialog(CustomBaseDialog):
             except ValueError:
                 log_message(
                     f"Invalid weighting input for GUID: {factor_guid}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
 

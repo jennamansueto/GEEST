@@ -58,7 +58,7 @@ class EPLEXWorkflow(WorkflowBase):
         self.eplex_score = self.attributes.get("eplex_score", 0.0)
         log_message(
             f"EPLEX score from attributes: {self.eplex_score}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 
@@ -87,7 +87,7 @@ class EPLEXWorkflow(WorkflowBase):
         Returns:
             Raster file path of the output.
         """
-        log_message(f"Processing area {index} for EPLEX score workflow", tag="Geest", level=Qgis.Info)
+        log_message(f"Processing area {index} for EPLEX score workflow", tag="GeoE3", level=Qgis.Info)
 
         self.progressChanged.emit(10.0)
 
@@ -124,13 +124,13 @@ class EPLEXWorkflow(WorkflowBase):
         if output_path and os.path.exists(output_path):
             log_message(
                 f"EPLEX raster created successfully: {output_path}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
         else:
             log_message(
                 "Failed to create EPLEX raster",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             return None

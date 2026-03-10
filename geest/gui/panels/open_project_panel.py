@@ -194,7 +194,7 @@ class OpenProjectPanel(FORM_CLASS, QWidget):
         super().showEvent(event)
         log_message(
             f"showEvent: Panel shown, working_dir={self.working_dir}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 

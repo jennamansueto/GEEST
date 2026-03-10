@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Init for Geest."""
+"""Init for GeoE3."""
 # ruff: noqa: E402
 # flake8: noqa: E402
 # The sys.path modification below MUST happen before other imports
@@ -84,9 +84,9 @@ logging.basicConfig(
 )
 date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 log_message("»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»", force=True)
-log_message(f"Geest started at {date}", force=True)
+log_message(f"GeoE3 started at {date}", force=True)
 version = version()
-log_message(f"Geest Version: {version}")
+log_message(f"GeoE3 Version: {version}")
 log_message(f"Logging output to: {log_file_path}", force=True)
 log_message(f"log_path_env: {log_path_env}", force=True)
 log_message("»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»", force=True)
@@ -107,7 +107,7 @@ def classFactory(iface):  # pylint: disable=missing-function-docstring
 
 class GeestPlugin:
     """
-    GEEST 2 plugin interface.
+    GeoE3 plugin interface.
 
     This class provides the main interface for the GeoE3 (Geospatial Enabling Environments for Employment Tool)
     plugin for QGIS. It handles the plugin initialization, GUI setup, debugging capabilities,
@@ -227,7 +227,7 @@ class GeestPlugin:
         self.restore_geometry()
 
         # Check the dock area; default to right dock if not set
-        settings = QSettings("ESMAP", "Geest")
+        settings = QSettings("ESMAP", "GeoE3")
         dock_area = settings.value("GeestDock/area", Qt.RightDockWidgetArea, type=int)
 
         # Add the dock widget to the restored or default dock area
@@ -254,7 +254,7 @@ class GeestPlugin:
         developer_mode = int(setting(key="developer_mode", default=0))
         if developer_mode:
             debug_icon = QIcon(resources_path("resources", "geest-debug.svg"))
-            self.debug_action = QAction(debug_icon, "GEEST Debug Mode", self.iface.mainWindow())
+            self.debug_action = QAction(debug_icon, "GeoE3 Debug Mode", self.iface.mainWindow())
             self.debug_action.triggered.connect(self.debug)
             self.iface.addToolBarIcon(self.debug_action)
 
@@ -523,7 +523,7 @@ for module_name in list(sys.modules.keys()):
         """
         Saves the geometry and dock area of GeestDock to QSettings.
         """
-        settings = QSettings("ESMAP", "Geest")
+        settings = QSettings("ESMAP", "GeoE3")
 
         if self.dock_widget:
             # Save geometry
@@ -537,7 +537,7 @@ for module_name in list(sys.modules.keys()):
         """
         Restores the geometry and dock area of GeestDock from QSettings.
         """
-        settings = QSettings("ESMAP", "Geest")
+        settings = QSettings("ESMAP", "GeoE3")
 
         if self.dock_widget:
             # Restore geometry

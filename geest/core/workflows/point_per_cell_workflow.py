@@ -66,7 +66,7 @@ class PointPerCellWorkflow(WorkflowBase):
         try:
             log_message(
                 f"Loading point per cell layer: {layer_path}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             self.features_layer = QgsVectorLayer(layer_path, "point_per_cell_layer", "ogr")
@@ -78,7 +78,7 @@ class PointPerCellWorkflow(WorkflowBase):
         except Exception as e:
             log_message(
                 f"Error loading point per cell layer: {str(e)}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             error = f"Error loading point per cell layer: {str(e)}"
@@ -110,7 +110,7 @@ class PointPerCellWorkflow(WorkflowBase):
         area_features_count = area_features.featureCount()
         log_message(
             f"Features layer for area {index + 1} loaded with {area_features_count} features.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         # Step 1: Select grid cells that intersect with features

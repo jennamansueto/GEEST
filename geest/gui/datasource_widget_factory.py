@@ -42,7 +42,7 @@ class DataSourceWidgetFactory:
         """
         log_message(
             f"Datasource widget factory called with key {widget_key}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         verbose_mode = int(setting(key="verbose_mode", default=0))
@@ -95,7 +95,7 @@ class DataSourceWidgetFactory:
             else:
                 log_message(
                     "Datasource Factory did not match any widgets",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
                 return None

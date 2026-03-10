@@ -56,7 +56,7 @@ def select_grid_cells_and_count_features(
     """
     log_message(
         "Selecting grid cells that intersect with features and counting intersections.",
-        tag="Geest",
+        tag="GeoE3",
         level=Qgis.Info,
     )
 
@@ -109,7 +109,7 @@ def select_grid_cells_and_count_features(
                 if counter % log_interval == 0:
                     log_message(
                         f"Feature {counter}: {rough_count} rough → {len(intersecting_ids)} refined intersections",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Info,
                     )
 
@@ -130,7 +130,7 @@ def select_grid_cells_and_count_features(
         # Instead of writing 2M features one-by-one, we batch them
         log_message(
             f"Writing {len_grid_ids} grid polygons to GeoPackage (batched)...",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 
@@ -191,7 +191,7 @@ def select_grid_cells_and_count_features(
             if batch_num % 10 == 0 or batch_num == total_batches - 1:
                 log_message(
                     f"Writing batch {batch_num + 1}/{total_batches} ({progress:.1f}%)",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
 
@@ -205,7 +205,7 @@ def select_grid_cells_and_count_features(
 
         log_message(
             f"Grid cells with feature counts saved to {output_path}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 
@@ -256,7 +256,7 @@ def assign_values_to_grid(grid_layer: QgsVectorLayer, feedback: QgsFeedback = No
     feature_count = grid_layer.featureCount()
     log_message(
         f"Assigning values to {feature_count} grid cells using SQL...",
-        tag="Geest",
+        tag="GeoE3",
         level=Qgis.Info,
     )
 
@@ -281,7 +281,7 @@ def assign_values_to_grid(grid_layer: QgsVectorLayer, feedback: QgsFeedback = No
 
         log_message(
             "SQL UPDATE completed",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 
@@ -294,7 +294,7 @@ def assign_values_to_grid(grid_layer: QgsVectorLayer, feedback: QgsFeedback = No
     except Exception as e:
         log_message(
             f"SQL UPDATE failed: {e}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Critical,
         )
         raise e
@@ -333,7 +333,7 @@ def select_grid_cells_and_assign_transport_score(
 
     log_message(
         "Selecting grid cells that intersect with features and assigning best transport score (highway or cycleway).",
-        tag="Geest",
+        tag="GeoE3",
         level=Qgis.Info,
     )
 
@@ -382,7 +382,7 @@ def select_grid_cells_and_assign_transport_score(
                 if verbose_mode:
                     log_message(
                         f"highway_type='{highway_type}' → lookup_key='{lookup_key}' → score={highway_score}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Info,
                     )
                 if highway_score > road_score:
@@ -398,7 +398,7 @@ def select_grid_cells_and_assign_transport_score(
                 if verbose_mode:
                     log_message(
                         f"cycleway_type='{cycleway_type}' → lookup_key='{lookup_key}' → score={cycleway_score}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Info,
                     )
                 if cycleway_score > road_score:
@@ -409,7 +409,7 @@ def select_grid_cells_and_assign_transport_score(
         if road_score == 0 or road_type is None:
             if verbose_mode:
                 log_message(
-                    f"Skipping feature: road_score={road_score}, road_type={road_type}", tag="Geest", level=Qgis.Info
+                    f"Skipping feature: road_score={road_score}, road_type={road_type}", tag="GeoE3", level=Qgis.Info
                 )
             continue
 
@@ -465,7 +465,7 @@ def select_grid_cells_and_assign_transport_score(
         if counter % log_interval == 0 or verbose_mode:
             log_message(
                 f"Feature {counter}/{feature_count}: {rough_count} candidates, {skipped_count} skipped, {len(intersecting_ids)} intersect ({road_type})",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
 
@@ -475,24 +475,24 @@ def select_grid_cells_and_assign_transport_score(
                 # Only update if the new road score is higher than the existing one
                 if road_score > grid_most_beneficial_road_scores[grid_id]:
                     if verbose_mode:
-                        log_message(f"Promoting score {road_score} to grid ID {grid_id}.", tag="Geest", level=Qgis.Info)
+                        log_message(f"Promoting score {road_score} to grid ID {grid_id}.", tag="GeoE3", level=Qgis.Info)
                     grid_most_beneficial_road_scores[grid_id] = road_score
                     grid_most_beneficial_road_types[grid_id] = road_type
                 else:
                     if verbose_mode:
                         log_message(
                             f"Existing score {grid_most_beneficial_road_scores[grid_id]} for grid ID {grid_id} is higher than or equal to new score {road_score}, not updating.",
-                            tag="Geest",
+                            tag="GeoE3",
                             level=Qgis.Info,
                         )
             else:
                 if verbose_mode:
                     log_message(
                         "Grid cell not found in list of most beneficial scores, assigning new score.",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Info,
                     )
-                    log_message(f"Assigning score {road_score} to grid ID {grid_id}.", tag="Geest", level=Qgis.Info)
+                    log_message(f"Assigning score {road_score} to grid ID {grid_id}.", tag="GeoE3", level=Qgis.Info)
                 grid_most_beneficial_road_scores[grid_id] = road_score
                 grid_most_beneficial_road_types[grid_id] = road_type
         counter += 1
@@ -505,11 +505,11 @@ def select_grid_cells_and_assign_transport_score(
         score_counts[score] = score_counts.get(score, 0) + 1
     max_score_cells = score_counts.get(5, 0)
 
-    log_message(f"{total_cells} grid cells scored. Distribution: {score_counts}", tag="Geest", level=Qgis.Info)
+    log_message(f"{total_cells} grid cells scored. Distribution: {score_counts}", tag="GeoE3", level=Qgis.Info)
     percent_max = 100 * max_score_cells / max(1, total_cells)
     log_message(
         f"Cells with max score (5): {max_score_cells} ({percent_max:.1f}%)",
-        tag="Geest",
+        tag="GeoE3",
         level=Qgis.Info,
     )
 
@@ -517,7 +517,7 @@ def select_grid_cells_and_assign_transport_score(
     len_grid_ids = len(grid_most_beneficial_road_scores)
     log_message(
         f"Writing {len_grid_ids} grid polygons to GeoPackage (batched)...",
-        tag="Geest",
+        tag="GeoE3",
         level=Qgis.Info,
     )
 
@@ -579,7 +579,7 @@ def select_grid_cells_and_assign_transport_score(
         if batch_num % 10 == 0 or batch_num == total_batches - 1:
             log_message(
                 f"Writing batch {batch_num + 1}/{total_batches} ({progress:.1f}%)",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
 
@@ -590,7 +590,7 @@ def select_grid_cells_and_assign_transport_score(
 
     log_message(
         f"Grid cells with OSM feature scores saved to {output_path}",
-        tag="Geest",
+        tag="GeoE3",
         level=Qgis.Info,
     )
 
