@@ -78,7 +78,7 @@ class AreaIterator:
         if not self.polygon_layer.isValid():
             log_message(
                 "Error: 'study_area_polygons' layer failed to load from the GeoPackage",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             raise ValueError("Failed to load 'study_area_polygons' layer from the GeoPackage.")
@@ -86,7 +86,7 @@ class AreaIterator:
         if not self.clip_polygon_layer.isValid():
             log_message(
                 "Error: 'study_area_clip_polygons' layer failed to load from the GeoPackage",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             raise ValueError("Failed to load 'study_area_clip_polygons' layer from the GeoPackage.")
@@ -94,7 +94,7 @@ class AreaIterator:
         if not self.bbox_layer.isValid():
             log_message(
                 "Error: 'study_area_bboxes' layer failed to load from the GeoPackage",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             raise ValueError("Failed to load 'study_area_bboxes' layer from the GeoPackage.")
@@ -154,7 +154,7 @@ class AreaIterator:
             if self.polygon_layer.crs() != self.bbox_layer.crs():
                 log_message(
                     "Warning: CRS mismatch between polygon and bbox layers",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 return
@@ -162,7 +162,7 @@ class AreaIterator:
             if self.polygon_layer.crs() != self.clip_polygon_layer.crs():
                 log_message(
                     "Warning: CRS mismatch between polygon and clip layers",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 return
@@ -220,7 +220,7 @@ class AreaIterator:
                     if not clip_feature:
                         log_message(
                             f"Info: No clip_polygon found for area '{area_name}', using polygon geometry as fallback",
-                            tag="Geest",
+                            tag="GeoE3",
                             level=Qgis.Info,
                         )
 
@@ -230,13 +230,13 @@ class AreaIterator:
                 else:
                     log_message(
                         f"Warning: No matching bbox feature found for area '{area_name}'",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Warning,
                     )
 
         except Exception as e:
             log_message(
                 f"Critical: Error during iteration - {str(e)}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""GEEST GUI widgets."""
+"""GeoE3 GUI widgets."""
 
 __copyright__ = "Copyright 2022, Tim Sutton"
 __license__ = "GPL version 3"
@@ -60,7 +60,7 @@ class SafetyRasterConfigurationWidget(BaseConfigurationWidget):
             <p><i>Method: Fisher-Jenks Natural Breaks</i></p>
             <table border='1' cellpadding='4' cellspacing='0'>
                 <tr>
-                    <th>GEEST Class</th>
+                    <th>GeoE3 Class</th>
                     <th>Description</th>
                     <th>NTL Value Range</th>
                     <th>Example</th>
@@ -105,7 +105,7 @@ class SafetyRasterConfigurationWidget(BaseConfigurationWidget):
         except Exception as e:
             log_message(
                 f"Error in set_internal_widgets_enabled: {e}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
 

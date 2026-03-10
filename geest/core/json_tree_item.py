@@ -791,7 +791,7 @@ class JsonTreeItem:
                 # Log if the indicator name is not found
                 log_message(
                     f"Indicator '{indicator_guid}' not found.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
 
@@ -814,7 +814,7 @@ class JsonTreeItem:
                 # Log if the factor name is not found
                 log_message(
                     f"Factor '{factor_guid}' not found.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
 
@@ -837,7 +837,7 @@ class JsonTreeItem:
                 # Log if the factor name is not found
                 log_message(
                     f"Factor '{dimension_guid}' not found.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
 

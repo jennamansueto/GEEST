@@ -65,7 +65,7 @@ class AggregationWorkflowBase(WorkflowBase):
         if len(input_files) == 0:
             log_message(
                 "Error: Found no Input files. Cannot proceed with aggregation.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             return None
@@ -78,7 +78,7 @@ class AggregationWorkflowBase(WorkflowBase):
         if invalid_layers:
             log_message(
                 f"Invalid raster layers found: {', '.join(invalid_layers)}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
         layer_count = len(raster_layers) - len(invalid_layers)
@@ -92,7 +92,7 @@ class AggregationWorkflowBase(WorkflowBase):
                 continue
             log_message(
                 f"Adding raster layer {i + 1} to the raster calculator. {raster_layer.source()}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             entry = QgsRasterCalculatorEntry()
@@ -125,7 +125,7 @@ class AggregationWorkflowBase(WorkflowBase):
 
         log_message(
             f"Aggregating {len(input_files)} raster layers to {aggregation_output}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         log_message(f"Aggregation Expression: {expression}")
@@ -146,7 +146,7 @@ class AggregationWorkflowBase(WorkflowBase):
         if result != 0:
             log_message(
                 "Raster aggregation completed successfully.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             return None
@@ -189,28 +189,28 @@ class AggregationWorkflowBase(WorkflowBase):
             if mode:
                 log_message(
                     f"Skipping {item.attribute('id')} as it is set to 'Do Not Use'",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
                 continue
             if excluded:
                 log_message(
                     f"Skipping {item.attribute('id')} as it is excluded from analysis",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
                 continue
             if disabled:
                 log_message(
                     f"Skipping {item.attribute('id')} as it is disabled (women considerations)",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
                 continue
             if not item.attribute(self.result_file_key, ""):
                 log_message(
                     f"Skipping {id} as it has no result file",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
                 raise ValueError(f"{id} has no result file")
@@ -231,7 +231,7 @@ class AggregationWorkflowBase(WorkflowBase):
 
         log_message(
             f"Total raster files found: {len(raster_files)}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         return raster_files
@@ -253,7 +253,7 @@ class AggregationWorkflowBase(WorkflowBase):
         # Log the execution
         log_message(
             f"Executing {self.analysis_mode} Aggregation Workflow",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         raster_files = self.get_raster_dict(index)
@@ -262,7 +262,7 @@ class AggregationWorkflowBase(WorkflowBase):
             error = f"No valid raster files found in '{self.guids}'. Cannot proceed with aggregation (likely all factors disabled or excluded)."
             log_message(
                 error,
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             self.attributes[self.result_key] = f"{self.analysis_mode} Aggregation Workflow Skipped"
@@ -271,7 +271,7 @@ class AggregationWorkflowBase(WorkflowBase):
 
         log_message(
             f"Found {len(raster_files)} raster files in 'Result File'. Proceeding with aggregation.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 

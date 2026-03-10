@@ -510,7 +510,7 @@ class JsonTreeModel(QAbstractItemModel):
 
             log_message(
                 f"Error converting tree to JSON: {e}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             # Show the trace back too

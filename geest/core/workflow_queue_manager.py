@@ -114,7 +114,7 @@ class WorkflowQueueManager(QObject):
         """
         log_message(
             "Starting FOREGROUND workflow queue processing...",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         for job in self.workflow_queue.job_queue:
@@ -139,7 +139,7 @@ class WorkflowQueueManager(QObject):
         if success:
             log_message(
                 "All workflow tasks completed successfully.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
         else:
@@ -162,6 +162,6 @@ class WorkflowQueueManager(QObject):
         Args:
             error_message: The error message from the failed task.
         """
-        log_message(f"Workflow error: {error_message}", tag="Geest", level=Qgis.Critical)
+        log_message(f"Workflow error: {error_message}", tag="GeoE3", level=Qgis.Critical)
         # Forward the error through the manager's signal
         self.processing_error.emit(error_message)

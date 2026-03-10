@@ -114,7 +114,7 @@ class OSMDownloaderTask(QgsTask):
 
         self.filename = filename if filename else os.path.splitext(os.path.basename(self.gpkg_path))[0]
 
-        log_message(f"OSMDownloaderTask: GeoPackage path: {self.gpkg_path}", tag="Geest", level=Qgis.Info)
+        log_message(f"OSMDownloaderTask: GeoPackage path: {self.gpkg_path}", tag="GeoE3", level=Qgis.Info)
 
         # Make sure output directory exists
         self._create_output_directory()
@@ -126,23 +126,23 @@ class OSMDownloaderTask(QgsTask):
                     os.remove(self.gpkg_path)
                     log_message(
                         f"Removed existing GeoPackage: {self.gpkg_path}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Info,
                     )
                 except Exception as e:
                     log_message(
                         f"Error removing existing GeoPackage: {e}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Critical,
                     )
             else:
                 log_message(
                     f"GeoPackage already exists and delete_gpkg is False: {self.gpkg_path}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
         else:
-            log_message(f"Writing to new GeoPackage: {self.gpkg_path}", tag="Geest", level=Qgis.Info)
+            log_message(f"Writing to new GeoPackage: {self.gpkg_path}", tag="GeoE3", level=Qgis.Info)
 
         # Determine extent
         if extents:
@@ -150,7 +150,7 @@ class OSMDownloaderTask(QgsTask):
             self.layer_extent = extents
             log_message(
                 f"Using provided extent: {extents.toString()}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
         else:
@@ -169,7 +169,7 @@ class OSMDownloaderTask(QgsTask):
                 self.layer_extent = transform.transformBoundingBox(self.layer_extent)
                 log_message(
                     f"Transformed extent to EPSG:4326: {self.layer_extent.toString()}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
 
@@ -185,11 +185,11 @@ class OSMDownloaderTask(QgsTask):
             self.progress_updated.emit("Starting OSM download...")
             log_message(
                 f"Downloading OSM {self.osm_download_type.value} data...",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             if self.output_crs:
-                log_message(f"Using CRS: {self.output_crs.authid()} for OSM download", tag="Geest", level=Qgis.Info)
+                log_message(f"Using CRS: {self.output_crs.authid()} for OSM download", tag="GeoE3", level=Qgis.Info)
 
             self.progress_updated.emit("Creating downloader...")
             downloader = OSMDownloaderFactory.get_osm_downloader(
@@ -208,11 +208,11 @@ class OSMDownloaderTask(QgsTask):
 
             self.setProgress(100)  # Trigger the UI to update with completion value
             self.progress_updated.emit("Download complete!")
-            log_message(f"OSM Downloaded to {self.gpkg_path}.", tag="Geest", level=Qgis.Info)
+            log_message(f"OSM Downloaded to {self.gpkg_path}.", tag="GeoE3", level=Qgis.Info)
 
         except Exception as e:
-            log_message(f"Error in OSMDownloaderTask: {str(e)}", tag="Geest", level=Qgis.Critical)
-            log_message(traceback.format_exc(), tag="Geest", level=Qgis.Critical)
+            log_message(f"Error in OSMDownloaderTask: {str(e)}", tag="GeoE3", level=Qgis.Critical)
+            log_message(traceback.format_exc(), tag="GeoE3", level=Qgis.Critical)
 
             # Write error to file for debugging
             try:
@@ -237,13 +237,13 @@ class OSMDownloaderTask(QgsTask):
                     os.remove(self.gpkg_path)
                     log_message(
                         f"Removed malformed GeoPackage after download failure: {self.gpkg_path}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Warning,
                     )
                 except Exception as cleanup_error:
                     log_message(
                         f"Could not remove malformed GeoPackage: {cleanup_error}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Warning,
                     )
 
@@ -256,4 +256,4 @@ class OSMDownloaderTask(QgsTask):
         output_dir = os.path.dirname(self.gpkg_path)
         if not os.path.exists(output_dir):
             os.makedirs(output_dir, exist_ok=True)
-            log_message(f"Created directory: {output_dir}", tag="Geest", level=Qgis.Info)
+            log_message(f"Created directory: {output_dir}", tag="GeoE3", level=Qgis.Info)

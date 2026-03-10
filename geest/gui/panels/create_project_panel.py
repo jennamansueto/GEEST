@@ -127,7 +127,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
         if self.crs() is None:
             log_message(
                 "CRS is None, cannot set layer or field combo box.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             self.crs_label.setText("Invalid CRS")
@@ -332,7 +332,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
         return self.layer_combo.currentLayer()
 
     def crs(self, working_directory=None):
-        """Get the CRS for the GEEST study area (NOT QGIS project CRS).
+        """Get the CRS for the GeoE3 study area (NOT QGIS project CRS).
 
         If study area already exists, return its CRS from study_area.gpkg.
         Otherwise, calculate CRS from the boundary layer (UTM zone or boundary layer CRS).
@@ -375,7 +375,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
             except Exception as e:
                 log_message(
                     f"Error calculating UTM zone from layer: {e}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
                 return None
@@ -428,7 +428,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
         """Slot to be called when the study area processing task is terminated (aborted or failed)."""
         log_message(
             "Study area processing was terminated.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Warning,
         )
         self.progress_bar.setMinimum(0)
@@ -442,7 +442,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
         """Slot to be called when the task completes successfully."""
         log_message(
             "*** Study area processing completed successfully. ***",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 
@@ -464,7 +464,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
 
     def on_report_completed(self):
         """Slot called when report generation completes successfully."""
-        log_message("Study area report generated successfully.", tag="Geest", level=Qgis.Info)
+        log_message("Study area report generated successfully.", tag="GeoE3", level=Qgis.Info)
 
         self.child_progress_bar.setMinimum(0)
         self.child_progress_bar.setMaximum(100)
@@ -478,7 +478,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
         """Slot called when report generation fails."""
         error_msg = str(self.report_task.exception) if hasattr(self.report_task, "exception") else "Unknown error"
 
-        log_message(f"Study area report generation failed: {error_msg}", tag="Geest", level=Qgis.Critical)
+        log_message(f"Study area report generation failed: {error_msg}", tag="GeoE3", level=Qgis.Critical)
 
         self.child_progress_bar.setMinimum(0)
         self.child_progress_bar.setMaximum(100)
@@ -497,7 +497,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
             error_message: Description of what failed and consequences.
             processor: The StudyAreaProcessingTask instance to send response to.
         """
-        log_message("GHSL download failed, prompting user for response", tag="Geest", level=Qgis.Warning)
+        log_message("GHSL download failed, prompting user for response", tag="GeoE3", level=Qgis.Warning)
 
         reply = QMessageBox.warning(
             self,
@@ -508,10 +508,10 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
         )
 
         if reply == QMessageBox.Yes:
-            log_message("User chose to continue without GHSL data", tag="Geest", level=Qgis.Info)
+            log_message("User chose to continue without GHSL data", tag="GeoE3", level=Qgis.Info)
             processor.set_ghsl_user_response(continue_without=True)
         else:
-            log_message("User chose to abort due to GHSL failure", tag="Geest", level=Qgis.Info)
+            log_message("User chose to abort due to GHSL failure", tag="GeoE3", level=Qgis.Info)
             processor.set_ghsl_user_response(continue_without=False)
             # Update progress bar to show abort
             self.progress_bar.setFormat("Aborted - GHSL download failed")
@@ -583,11 +583,11 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
         gpkg_path = os.path.join(self.working_dir, "study_area", "study_area.gpkg")
         project = QgsProject.instance()
 
-        # Check if 'Geest' group exists, otherwise create it
+        # Check if 'GeoE3' group exists, otherwise create it
         root = project.layerTreeRoot()
-        geest_group = root.findGroup("Geest Study Area")
+        geest_group = root.findGroup("GeoE3 Study Area")
         if geest_group is None:
-            geest_group = root.insertGroup(0, "Geest Study Area")  # Insert at the top of the layers panel
+            geest_group = root.insertGroup(0, "GeoE3 Study Area")  # Insert at the top of the layers panel
 
         layers = [
             "study_area_bboxes",
@@ -598,7 +598,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
             if not os.path.exists(gpkg_path):
                 log_message(
                     f"GeoPackage not yet created: {gpkg_path}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
                 return
@@ -610,7 +610,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
                 if file_size < 1024:  # Less than 1KB suggests still initializing
                     log_message(
                         f"GeoPackage still initializing (size: {file_size} bytes)",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Info,
                     )
                     return
@@ -623,7 +623,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
             try:
                 ds = ogr.Open(gpkg_path, 0)
                 if ds is None:
-                    log_message(f"Could not open GeoPackage: {gpkg_path}", tag="Geest", level=Qgis.Warning)
+                    log_message(f"Could not open GeoPackage: {gpkg_path}", tag="GeoE3", level=Qgis.Warning)
                     continue
 
                 layer_exists = ds.GetLayerByName(layer_name) is not None
@@ -634,7 +634,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
                 if "database is locked" in error_str or "malformed" in error_str:
                     log_message(
                         f"Database busy or being written, skipping map refresh for {layer_name}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Info,
                     )
                     continue
@@ -643,7 +643,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
             if not layer_exists:
                 log_message(
                     f"Layer '{layer_name}' does not exist in GeoPackage yet (will be created during processing).",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
                 continue
@@ -654,7 +654,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
             if not layer.isValid():
                 log_message(
                     f"Failed to load '{layer_name}' layer from GeoPackage.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
                 continue
@@ -685,7 +685,7 @@ class CreateProjectPanel(FORM_CLASS, QWidget):
                     log_message(
                         f"Could not refresh layer {existing_layer.name()}: {e}. "
                         "Layer may be locked (this is normal during processing).",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Info,
                     )
             else:

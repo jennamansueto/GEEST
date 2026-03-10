@@ -457,12 +457,12 @@ class WorkflowBase(QObject):
 
             log_message(
                 f"Failed to reproject features layer for {self.workflow_name}: {e}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             log_message(
                 traceback.format_exc(),
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             with self.item.atomicAttributeUpdate() as attrs:
@@ -489,7 +489,7 @@ class WorkflowBase(QObject):
                     if self.feedback.isCanceled():
                         log_message(
                             f"{self.class_name} Processing was canceled by the user.",
-                            tag="Geest",
+                            tag="GeoE3",
                             level=Qgis.Warning,
                         )
                     raster_output = None
@@ -508,7 +508,7 @@ class WorkflowBase(QObject):
                         ):
                             log_message(
                                 "No area features ... skipping",
-                                tag="Geest",
+                                tag="GeoE3",
                                 level=Qgis.Warning,
                             )
                             continue
@@ -559,7 +559,7 @@ class WorkflowBase(QObject):
                 self.updateStatus(f"{self.workflow_name} complete")
                 log_message(
                     f"{self.workflow_name} Completed. Output VRT: {vrt_filepath}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
 
@@ -567,7 +567,7 @@ class WorkflowBase(QObject):
                 if areas_processed > 0:
                     log_message(
                         f"Processing Summary - Areas processed: {areas_processed}",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Info,
                     )
                 with self.item.atomicAttributeUpdate() as attrs:
@@ -584,12 +584,12 @@ class WorkflowBase(QObject):
 
                 log_message(
                     f"Failed to process {self.workflow_name}: {e}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
                 log_message(
                     traceback.format_exc(),
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
                 with self.item.atomicAttributeUpdate() as attrs:
@@ -638,7 +638,7 @@ class WorkflowBase(QObject):
             return None
         log_message(
             f"{self.workflow_name} Select Features Started",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         layer = subset_vector_layer(self.workflow_directory, self.features_layer, area_geom, output_prefix)
@@ -808,14 +808,14 @@ class WorkflowBase(QObject):
         output_path = os.path.join(self.workflow_directory, output_name)
         log_message(
             f"Masking raster {raster_path} for area {index} to {output_path}",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         # verify the raster path exists
         if not os.path.exists(raster_path):
             log_message(
                 f"Raster file not found at {raster_path}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             raise QgsProcessingException(f"Raster file not found at {raster_path}")
@@ -887,12 +887,12 @@ class WorkflowBase(QObject):
                     except Exception as e:
                         log_message(
                             f"Failed to remove {file_path}: {e}",
-                            tag="Geest",
+                            tag="GeoE3",
                             level=Qgis.Warning,
                         )
                         log_message(
                             traceback.format_exc(),
-                            tag="Geest",
+                            tag="GeoE3",
                             level=Qgis.Warning,
                         )
                         continue

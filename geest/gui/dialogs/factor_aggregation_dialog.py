@@ -480,12 +480,12 @@ class FactorAggregationDialog(CustomBaseDialog):
             except ValueError:
                 log_message(
                     f"Invalid weighting input for GUID: {indicator_guid}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 import traceback
 
-                log_message(traceback.format_exc(), tag="Geest", level=Qgis.Warning)
+                log_message(traceback.format_exc(), tag="GeoE3", level=Qgis.Warning)
 
     def accept_changes(self):
         """Handle the OK button by applying changes and closing the dialog."""

@@ -22,7 +22,7 @@ class IndexScoreWithGHSLConfigurationWidget(BaseConfigurationWidget):
             )
             self.internal_layout.addWidget(self.info_label)
         except Exception as e:
-            log_message(f"Error in add_internal_widgets: {e}", "Geest", level=Qgis.Critical)
+            log_message(f"Error in add_internal_widgets: {e}", "GeoE3", level=Qgis.Critical)
 
     def get_data(self) -> dict:
         """
@@ -39,7 +39,7 @@ class IndexScoreWithGHSLConfigurationWidget(BaseConfigurationWidget):
         except Exception as e:
             log_message(
                 f"Error in set_internal_widgets_enabled: {e}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
 

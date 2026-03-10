@@ -140,7 +140,7 @@ class OpportunitiesMaskProcessor(QgsTask):
             if not layer_source:
                 log_message(
                     f"{self.mask_mode}_mask_shapefile not found",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
                 raise Exception(f"{self.mask_mode}_mask_shapefile not found")
@@ -191,7 +191,7 @@ class OpportunitiesMaskProcessor(QgsTask):
                 if not self._download_ghsl_data(working_directory):
                     log_message(
                         "Failed to download GHSL data for mask",
-                        tag="Geest",
+                        tag="GeoE3",
                         level=Qgis.Critical,
                     )
                     raise Exception("Failed to download GHSL data for mask")
@@ -200,7 +200,7 @@ class OpportunitiesMaskProcessor(QgsTask):
             if not os.path.exists(layer_source):
                 log_message(
                     f"{self.mask_mode} parquet file not found after download attempt",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
                 raise Exception(f"{self.mask_mode} parquet file not found")
@@ -208,7 +208,7 @@ class OpportunitiesMaskProcessor(QgsTask):
             if os.path.getsize(layer_source) == 0:
                 log_message(
                     f"{self.mask_mode} parquet file is 0 bytes after download attempt",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Critical,
                 )
                 raise Exception(f"{self.mask_mode} parquet file is 0 bytes")

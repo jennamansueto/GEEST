@@ -103,7 +103,7 @@ class CsvDataSourceWidget(BaseDataSourceWidget):
 
             if missing_columns:
                 error_message = f"Missing columns: {', '.join(missing_columns)}"
-                log_message(error_message, tag="Geest", level=Qgis.Critical)
+                log_message(error_message, tag="GeoE3", level=Qgis.Critical)
                 QMessageBox.critical(self, "Invalid CSV", error_message)
             else:
                 log_message("CSV file validation successful.")

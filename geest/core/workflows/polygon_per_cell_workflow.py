@@ -60,14 +60,14 @@ class PolygonPerCellWorkflow(WorkflowBase):
         if not layer_path:
             log_message(
                 "Invalid raster found in polygon_per_cell_shapefile, trying polygon_per_cell_layer_source.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             layer_path = self.attributes.get("polygon_per_cell_layer_source", None)
             if not layer_path:
                 log_message(
                     "No points layer found in polygon_per_cell_layer_source.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 return False
@@ -96,7 +96,7 @@ class PolygonPerCellWorkflow(WorkflowBase):
         area_features_count = area_features.featureCount()
         log_message(
             f"Features layer for area {index + 1} loaded with {area_features_count} features.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         # Step 1: Select grid cells that intersect with features

@@ -84,7 +84,7 @@ def jenks_natural_breaks(
     if was_sampled:
         log_message(
             f"🔬 Sampled {len(clean_data)} values from {len(data)} " f"for Jenks classification",
-            tag="Geest",
+            tag="GeoE3",
             level=1,  # Info level
         )
 

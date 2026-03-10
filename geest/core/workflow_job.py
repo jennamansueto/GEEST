@@ -355,7 +355,7 @@ class WorkflowJob(QgsTask):
         if not self._workflow:
             log_message(
                 f"Error: No workflow assigned to {self.description()}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             return False
@@ -368,7 +368,7 @@ class WorkflowJob(QgsTask):
             result = self._workflow.execute()
             log_message(
                 f"WorkflowJob {self.description()} attributes.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             # attributes = self._item.attributes()
@@ -376,14 +376,14 @@ class WorkflowJob(QgsTask):
             if result:
                 log_message(
                     f"Workflow {self.description()} completed.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
                 return True
             else:
                 log_message(
                     f"Workflow {self.description()} did not complete successfully.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
                 return False
@@ -394,7 +394,7 @@ class WorkflowJob(QgsTask):
 
             log_message(
                 f"{traceback.format_exc()}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             error_message = f"Error in {self.description()}: {str(e)}"
@@ -458,7 +458,7 @@ class WorkflowJob(QgsTask):
         """
         log_message(
             "🏁 Job Finished",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         # Emit the custom signal job_finished with the success state

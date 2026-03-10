@@ -63,7 +63,7 @@ class SinglePointBufferWorkflow(WorkflowBase):
         if not layer_source:
             log_message(
                 "single_buffer_point_shapefile not found",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             return False

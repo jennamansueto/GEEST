@@ -523,7 +523,7 @@ class RoadNetworkPanel(FORM_CLASS, QWidget):
             # Layer already downloaded - just load it
             log_message(
                 "Active transport network already exists, loading from cache",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             network_layer_path_with_layer = f"{network_layer_path}|layername=active_transport_network"
@@ -534,7 +534,7 @@ class RoadNetworkPanel(FORM_CLASS, QWidget):
                 self.road_layer_combo.setLayer(layer)
                 if self._message_bar:
                     self._message_bar.pushMessage(
-                        "GEEST",
+                        "GeoE3",
                         "Active transport network loaded from cache (already downloaded)",
                         level=Qgis.Info,
                         duration=5,
@@ -544,7 +544,7 @@ class RoadNetworkPanel(FORM_CLASS, QWidget):
                 # File exists but is invalid - remove it and re-download
                 log_message(
                     "Existing active transport network file is invalid, will re-download",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 os.remove(network_layer_path)
@@ -639,7 +639,7 @@ class RoadNetworkPanel(FORM_CLASS, QWidget):
         """⚙️ Active transport download done."""
         log_message(
             "*** OSM Active Transport download completed successfully. ***",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         network_layer_path = os.path.join(self.working_directory, "study_area", "active_transport_network.gpkg")

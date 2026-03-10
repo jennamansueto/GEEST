@@ -37,7 +37,7 @@ class StudyAreaReportTask(QgsTask):
             bool: True if successful, False otherwise.
         """
         try:
-            log_message("Starting study area report generation...", tag="Geest", level=Qgis.Info)
+            log_message("Starting study area report generation...", tag="GeoE3", level=Qgis.Info)
 
             report = StudyAreaReport(gpkg_path=self.gpkg_path, report_name="Study Area Summary")
             report.create_layout()
@@ -45,14 +45,14 @@ class StudyAreaReportTask(QgsTask):
 
             log_message(
                 f"Study area report generated successfully: {self.report_path}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             return True
 
         except Exception as e:
             self.exception = e
-            log_message(f"Error generating study area report: {e}", tag="Geest", level=Qgis.Critical)
+            log_message(f"Error generating study area report: {e}", tag="GeoE3", level=Qgis.Critical)
             return False
 
     def finished(self, result: bool):
@@ -72,11 +72,11 @@ class StudyAreaReportTask(QgsTask):
                     else:
                         subprocess.run(["xdg-open", self.report_path], check=False)  # nosec B603 B607
             except Exception as e:
-                log_message(f"Could not open PDF viewer: {e}", tag="Geest", level=Qgis.Warning)
+                log_message(f"Could not open PDF viewer: {e}", tag="GeoE3", level=Qgis.Warning)
         else:
-            log_message("Study area report generation failed.", tag="Geest", level=Qgis.Critical)
+            log_message("Study area report generation failed.", tag="GeoE3", level=Qgis.Critical)
 
     def cancel(self):
         """Called when task is cancelled."""
-        log_message("Study area report generation cancelled.", tag="Geest", level=Qgis.Warning)
+        log_message("Study area report generation cancelled.", tag="GeoE3", level=Qgis.Warning)
         super().cancel()

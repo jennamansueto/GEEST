@@ -307,12 +307,12 @@ class GeestDock(QDockWidget):
         except Exception as e:
             log_message(
                 f"Error initializing GeestDock: {str(e)}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             import traceback
 
-            log_message(traceback.format_exc(), tag="Geest", level=Qgis.Critical)
+            log_message(traceback.format_exc(), tag="GeoE3", level=Qgis.Critical)
 
         # Load the background image and style sheet
         # do this last so it applies to all the widgets
@@ -353,7 +353,7 @@ class GeestDock(QDockWidget):
             geest_project = setting(str(checksum), None, prefer_project_setting=True)
             log_message(
                 f"Geest project path : {geest_project} ({checksum})",  # noqa E225
-                tag="Geest",  # noqa E225
+                tag="GeoE3",  # noqa E225
                 level=Qgis.Info,  # noqa E225
             )
             if geest_project and os.path.exists(os.path.join(geest_project, "model.json")):

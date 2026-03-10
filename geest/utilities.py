@@ -1,6 +1,6 @@
 # coding=utf-8
 
-"""Utilities for GEEST."""
+"""Utilities for GeoE3."""
 
 __copyright__ = "Copyright 2022, Tim Sutton"
 __license__ = "GPL version 3"
@@ -380,7 +380,7 @@ def get_ui_class(ui_file: str):
     return uic.loadUiType(ui_file_path)[0]
 
 
-def log_message(message: str, level: int = Qgis.Info, tag: str = "Geest", force: bool = False) -> None:
+def log_message(message: str, level: int = Qgis.Info, tag: str = "GeoE3", force: bool = False) -> None:
     """
     Logs a message to both QgsMessageLog and a text file,
     including the caller's class or module name and line number.
@@ -420,7 +420,7 @@ def log_message(message: str, level: int = Qgis.Info, tag: str = "Geest", force:
 
 
 def geest_layer_ids():
-    """Get a list of the layer ids in the Geest group.
+    """Get a list of the layer ids in the GeoE3 group.
 
     This is useful for filtering layers in the layer combo boxes.
 
@@ -436,13 +436,13 @@ def geest_layer_ids():
     # Get the layer tree root
     root = QgsProject.instance().layerTreeRoot()
 
-    # Find the "Geest" group
-    geest_group = root.findGroup("Geest")
+    # Find the "GeoE3" group
+    geest_group = root.findGroup("GeoE3")
     if not geest_group:
-        # No group named "Geest," no need to filter
+        # No group named "GeoE3," no need to filter
         return
 
-    # Recursively collect IDs of all layers in the "Geest" group
+    # Recursively collect IDs of all layers in the "GeoE3" group
     def collect_layer_ids(group: QgsLayerTreeGroup) -> set:
         """🔄 Collect layer ids.
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 
-"""Utilities for Geest."""
+"""Utilities for GeoE3."""
 
 __copyright__ = "Copyright 2022, Tim Sutton"
 __license__ = "GPL version 3"
@@ -62,7 +62,7 @@ def extent_mollweide(working_directory, log_message=print):
                 extent_mollweide = transform.transformBoundingBox(extent)
                 log_message(f"Study area bbox in Mollweide: {extent_mollweide}")
     except Exception as e:
-        log_message(f"Failed to compute/reproject study area bbox: {e}", tag="Geest", level=Qgis.Warning)
+        log_message(f"Failed to compute/reproject study area bbox: {e}", tag="GeoE3", level=Qgis.Warning)
     return extent_mollweide
 
 
@@ -71,7 +71,7 @@ def add_to_map(
     key: str = "result_file",
     layer_name: str = None,
     qml_key: str = None,
-    group: str = "Geest",
+    group: str = "GeoE3",
 ):
     """Add the item to the map."""
     log_message(item.attributesAsMarkdown())
@@ -96,14 +96,14 @@ def add_to_map(
         if not layer.isValid():
             log_message(
                 f"Layer {layer_name} is invalid and cannot be added.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             return
 
         project = QgsProject.instance()
 
-        # Check if 'Geest' group exists, otherwise create it
+        # Check if 'GeoE3' group exists, otherwise create it
         root = project.layerTreeRoot()
         geest_group = root.findGroup(group)
         if geest_group is None:
@@ -141,7 +141,7 @@ def add_to_map(
         if existing_layer is not None:
             log_message(
                 f"Refreshing existing layer: {existing_layer.name()}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             # Make the layer visible
@@ -166,7 +166,7 @@ def add_to_map(
 
         log_message(
             f"Layer {layer.name()} and its parent groups are now visible.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 

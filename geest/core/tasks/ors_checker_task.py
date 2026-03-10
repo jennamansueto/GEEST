@@ -58,7 +58,7 @@ class OrsCheckerTask(QgsTask):
             # codeql[python/clear-text-logging-sensitive-data] - Only logging response type, not sensitive data
             log_message(
                 f"ORS API Key Validation Task response type: {response_type}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
             # Assuming the response JSON contains a 'status' field
@@ -75,7 +75,7 @@ class OrsCheckerTask(QgsTask):
             self.exception = e
             log_message(
                 f"Exception in ORS API Key Validation Task: {str(e)}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
             return False
@@ -85,7 +85,7 @@ class OrsCheckerTask(QgsTask):
         if self.isCanceled():
             log_message(
                 "ORS API Key Validation Task was canceled by the user.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             self.job_finished.emit(False)

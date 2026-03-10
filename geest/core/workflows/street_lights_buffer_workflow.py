@@ -72,14 +72,14 @@ class StreetLightsBufferWorkflow(WorkflowBase):
         if not layer_path:
             log_message(
                 "Invalid raster found in street_lights_shapefile, trying street_lights_point_layer_source.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             layer_path = self.attributes.get("street_lights_layer_source", None)
             if not layer_path:
                 log_message(
                     "No points layer found in street_lights_layer_source.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 error = f"Streetlights point layer is not set correctly: Shapefile: {self.street_lights_shapefile} "
@@ -231,7 +231,7 @@ class StreetLightsBufferWorkflow(WorkflowBase):
         """
         log_message(
             "Assigning scores to grid layer based on intersection with buffered layer",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
 
@@ -259,7 +259,7 @@ class StreetLightsBufferWorkflow(WorkflowBase):
                 overlap_percent = (intersection.area() / grid_geom.area()) * 100
                 log_message(
                     f"Overlap percentage: {overlap_percent}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Info,
                 )
 

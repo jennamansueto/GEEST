@@ -207,7 +207,7 @@ class AnalysisAggregationDialog(FORM_CLASS, CustomBaseDialog):
             try:
                 self.restoreGeometry(geometry)
             except Exception:
-                log_message("Restoring geometry failed", tag="Geest", level=Qgis.Warning)
+                log_message("Restoring geometry failed", tag="GeoE3", level=Qgis.Warning)
                 pass
         else:
             log_message("No saved geometry found, resizing dialog")
@@ -555,7 +555,7 @@ class AnalysisAggregationDialog(FORM_CLASS, CustomBaseDialog):
             except ValueError:
                 log_message(
                     f"Invalid weighting input for GUID: {dimension_guid}",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
 

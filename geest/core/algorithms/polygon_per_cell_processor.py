@@ -39,7 +39,7 @@ def assign_reclassification_to_polygons(layer: QgsVectorLayer) -> QgsVectorLayer
 
             log_message(
                 f"Perimeter of polygon {feature.id()}: {perimeter}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Info,
             )
 

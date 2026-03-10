@@ -53,7 +53,7 @@ class ContextualIndexScoreConfigurationWidget(BaseConfigurationWidget):
             self.html_table_label.setText(mapping_table_html)
             self.internal_layout.addWidget(self.html_table_label)
         except Exception as e:
-            log_message(f"Error in add_internal_widgets: {e}", "Geest", level=Qgis.Critical)
+            log_message(f"Error in add_internal_widgets: {e}", "GeoE3", level=Qgis.Critical)
 
     def get_data(self) -> dict:
         """
@@ -71,7 +71,7 @@ class ContextualIndexScoreConfigurationWidget(BaseConfigurationWidget):
         except Exception as e:
             log_message(
                 f"Error in set_internal_widgets_enabled: {e}",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Critical,
             )
 

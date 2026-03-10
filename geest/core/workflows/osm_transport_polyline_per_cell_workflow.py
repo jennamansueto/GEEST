@@ -64,7 +64,7 @@ class OsmTransportPolylinePerCellWorkflow(WorkflowBase):
         if not layer_path:
             log_message(
                 "Nothing found in osm_transport_polyline_per_cell_shapefile, trying osm_transport_polyline_per_cell_layer_source.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             layer_path = self.attributes.get("osm_transport_polyline_per_cell_layer_source", None)
@@ -72,14 +72,14 @@ class OsmTransportPolylinePerCellWorkflow(WorkflowBase):
             if not layer_path:
                 log_message(
                     "No osm_transport_polyline_per_cell_layer_source found, trying road_network_layer_path.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 layer_path = self.attributes.get("road_network_layer_path", None)
 
                 if not layer_path:
                     error_msg = "No transport layer found. Please configure a data source or download the active transport network."
-                    log_message(error_msg, tag="Geest", level=Qgis.Critical)
+                    log_message(error_msg, tag="GeoE3", level=Qgis.Critical)
                     raise ValueError(error_msg)
 
         self.features_layer = QgsVectorLayer(layer_path, "OSM Transport Layer", "ogr")
@@ -106,7 +106,7 @@ class OsmTransportPolylinePerCellWorkflow(WorkflowBase):
         area_features_count = area_features.featureCount()
         log_message(
             f"Features layer for area {index + 1} loaded with {area_features_count} features.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         # Step 1: Select grid cells that intersect with features and assign road scores
@@ -123,10 +123,10 @@ class OsmTransportPolylinePerCellWorkflow(WorkflowBase):
 
         log_message(
             "OSM Transport Polyline per Cell - Selected grid cells and assigned transport scores.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
-        log_message(f"Grid cells with transport scores saved to: {output_path}", tag="Geest", level=Qgis.Info)
+        log_message(f"Grid cells with transport scores saved to: {output_path}", tag="GeoE3", level=Qgis.Info)
 
         # Step 2: Rasterize the grid layer using the assigned values
         # Create a scored boundary layer

@@ -54,14 +54,14 @@ class ClassifiedPolygonWorkflow(WorkflowBase):
         if not layer_path:
             log_message(
                 "Invalid layer found in use_classify_polygon_into_classes_shapefile, trying use_classify_polygon_into_classes_source.",
-                tag="Geest",
+                tag="GeoE3",
                 level=Qgis.Warning,
             )
             layer_path = self.attributes.get("classify_polygon_into_classes_layer_source", None)
             if not layer_path:
                 log_message(
                     "No layer found in use_classify_polygon_into_classes_layer_source.",
-                    tag="Geest",
+                    tag="GeoE3",
                     level=Qgis.Warning,
                 )
                 return False
@@ -92,7 +92,7 @@ class ClassifiedPolygonWorkflow(WorkflowBase):
         area_features_count = area_features.featureCount()
         log_message(
             f"Features layer for area {index + 1} loaded with {area_features_count} features.",
-            tag="Geest",
+            tag="GeoE3",
             level=Qgis.Info,
         )
         # Step 1: Assign reclassification values based on perceived safety
