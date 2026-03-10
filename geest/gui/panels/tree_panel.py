@@ -1150,9 +1150,9 @@ class TreePanel(QWidget):
         # Add to map under Study Area group
         project = QgsProject.instance()
         root = project.layerTreeRoot()
-        study_area_group = root.findGroup("Geest Study Area")
+        study_area_group = root.findGroup("GeoE3 Study Area")
         if study_area_group is None:
-            study_area_group = root.insertGroup(0, "Geest Study Area")
+            study_area_group = root.insertGroup(0, "GeoE3 Study Area")
 
         project.addMapLayer(layer, False)
         study_area_group.addLayer(layer)

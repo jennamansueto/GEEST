@@ -227,7 +227,7 @@ class GeestPlugin:
         self.restore_geometry()
 
         # Check the dock area; default to right dock if not set
-        settings = QSettings("ESMAP", "GeoE3")
+        settings = QSettings("ESMAP", "Geest")
         dock_area = settings.value("GeestDock/area", Qt.RightDockWidgetArea, type=int)
 
         # Add the dock widget to the restored or default dock area
@@ -523,7 +523,7 @@ for module_name in list(sys.modules.keys()):
         """
         Saves the geometry and dock area of GeestDock to QSettings.
         """
-        settings = QSettings("ESMAP", "GeoE3")
+        settings = QSettings("ESMAP", "Geest")
 
         if self.dock_widget:
             # Save geometry
@@ -537,7 +537,7 @@ for module_name in list(sys.modules.keys()):
         """
         Restores the geometry and dock area of GeestDock from QSettings.
         """
-        settings = QSettings("ESMAP", "GeoE3")
+        settings = QSettings("ESMAP", "Geest")
 
         if self.dock_widget:
             # Restore geometry
