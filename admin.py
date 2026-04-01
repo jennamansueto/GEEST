@@ -25,6 +25,7 @@ TEST_FILES = ["test", "test_suite.py", "docker-compose.yml", "scripts"]
 # These will be downloaded for multiple platforms
 VENDORED_PACKAGES = [
     "h3",
+    "defusedxml",
 ]
 # Platform tags for wheel downloads (covers most QGIS installations)
 WHEEL_PLATFORMS = [
