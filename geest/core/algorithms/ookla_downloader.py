@@ -9,6 +9,7 @@ import os
 import timeit
 import urllib.request
 from typing import Optional
+from urllib.parse import urlparse
 
 from osgeo import gdal, ogr, osr
 from qgis.core import (
@@ -166,6 +167,9 @@ class OoklaDownloader:
             return local_path
 
         url = self._s3_to_https(input_uri)
+        parsed = urlparse(url)
+        if parsed.scheme not in ("https",):
+            raise OoklaException(f"Refusing to download from non-HTTPS URL: {url}")
         tmp_path = f"{local_path}.tmp"
         log_message(f"Downloading Ookla parquet to local cache: {url}")
         try:
