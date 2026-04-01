@@ -4,18 +4,7 @@
 This module contains functionality for osm data downloader base.
 """
 
-try:
-    from defusedxml import ElementTree as ET
-except ImportError:
-    # Fallback to standard library with warning
-    import warnings
-    import xml.etree.ElementTree as ET  # nosec B405
-
-    warnings.warn(
-        "defusedxml not available, falling back to xml.etree.ElementTree. "
-        "Consider installing defusedxml for better security: pip install defusedxml",
-        UserWarning,
-    )
+from defusedxml import ElementTree as ET
 import os
 import time
 from abc import ABC
@@ -357,7 +346,7 @@ class OSMDataDownloaderBase(ABC):
         # Read from XML file (consistent with process_line_response)
         with open(self.output_xml_path, "r", encoding="utf-8") as f:
             response_data = f.read()
-        root = ET.fromstring(response_data)  # nosec B314
+        root = ET.fromstring(response_data)
         layer = QgsVectorLayer("Point?crs=EPSG:4326", "OSM Point Data", "memory")
         provider = layer.dataProvider()
         provider.addAttributes([QgsField("id", QVariant.String)])
@@ -392,7 +381,7 @@ class OSMDataDownloaderBase(ABC):
         # Read the cached OSM XML response
         with open(self.output_xml_path, "r", encoding="utf-8") as f:
             response_data = f.read()
-        root = ET.fromstring(response_data)  # nosec B314
+        root = ET.fromstring(response_data)
 
         # Build node index: maps OSM node IDs to (lon, lat) coordinates
         # This one-time indexing prevents repeated XML tree searches
@@ -455,7 +444,7 @@ class OSMDataDownloaderBase(ABC):
         # Read the cached OSM XML response
         with open(self.output_xml_path, "r", encoding="utf-8") as f:
             response_data = f.read()
-        root = ET.fromstring(response_data)  # nosec B314
+        root = ET.fromstring(response_data)
 
         # Build node index: maps OSM node IDs to (lon, lat) coordinates
         # This one-time indexing prevents O(n²) performance from repeated XML tree searches
