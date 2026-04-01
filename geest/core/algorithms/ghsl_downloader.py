@@ -184,15 +184,75 @@ class GHSLDownloader:
         else:
             log_message(f"Using cached zip: {zip_path}")
 
-        # 2. Unpack
+        # 2. Unpack (with Zip Slip and Zip Bomb protection)
         extracted_dir = os.path.join(cache_dir, tile_id)
         os.makedirs(extracted_dir, exist_ok=True)
 
         with zipfile.ZipFile(zip_path, "r") as zf:
             if not all(os.path.exists(os.path.join(extracted_dir, f)) for f in zf.namelist()):
-                zf.extractall(path=extracted_dir)
+                self._safe_extract(zf, extracted_dir)
                 log_message(f"Extracted {tile_id} to {extracted_dir}")
             else:
                 log_message(f"{tile_id} already unpacked in {extracted_dir}")
 
             return [os.path.join(extracted_dir, f) for f in zf.namelist()]
+
+    @staticmethod
+    def _safe_extract(zf: zipfile.ZipFile, target_dir: str) -> None:
+        """Safely extract a zip file with Zip Slip and Zip Bomb protection.
+
+        Validates that no entry escapes the target directory (Zip Slip) and
+        enforces limits on total size, entry count, and compression ratio
+        (Zip Bomb).
+
+        Args:
+            zf: An open ZipFile object to extract from.
+            target_dir: The directory to extract files into.
+
+        Raises:
+            ValueError: If a zip entry would escape the target directory.
+            RuntimeError: If zip bomb thresholds are exceeded.
+        """
+        max_entries = 10000
+        max_total_size = 2_000_000_000  # 2 GB
+        max_ratio = 100
+
+        resolved_target = os.path.realpath(target_dir)
+        total_size = 0
+
+        entries = zf.infolist()
+        if len(entries) > max_entries:
+            raise RuntimeError(
+                f"Zip archive contains {len(entries)} entries, exceeding the "
+                f"safety limit of {max_entries}. Aborting extraction."
+            )
+
+        for entry in entries:
+            # Zip Slip protection: ensure resolved path stays within target
+            member_path = os.path.realpath(os.path.join(target_dir, entry.filename))
+            if not member_path.startswith(resolved_target + os.sep) and member_path != resolved_target:
+                raise ValueError(
+                    f"Zip entry '{entry.filename}' would extract outside the "
+                    f"target directory. Aborting extraction (possible Zip Slip attack)."
+                )
+
+            # Zip Bomb protection: check compression ratio per entry
+            if entry.compress_size > 0:
+                ratio = entry.file_size / entry.compress_size
+                if ratio > max_ratio:
+                    raise RuntimeError(
+                        f"Zip entry '{entry.filename}' has a compression ratio "
+                        f"of {ratio:.1f}, exceeding the safety limit of {max_ratio}. "
+                        f"Aborting extraction (possible Zip Bomb attack)."
+                    )
+
+            # Zip Bomb protection: check cumulative uncompressed size
+            total_size += entry.file_size
+            if total_size > max_total_size:
+                raise RuntimeError(
+                    f"Total uncompressed size ({total_size} bytes) exceeds the "
+                    f"safety limit of {max_total_size} bytes. "
+                    f"Aborting extraction (possible Zip Bomb attack)."
+                )
+
+            zf.extract(entry, target_dir)
